@@ -20,7 +20,7 @@ dependencies = [
 
 [tool.ruff]
 line-length = 88
-target-version = "3.12"
+target-version = "py311"
 
 [tool.ruff.select]
 E = "error-code"
