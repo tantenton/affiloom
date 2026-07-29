@@ -1,4 +1,15 @@
-import { NotFoundError, Product, ProductListResponse } from "./types";
+import {
+  Article,
+  ArticleListResponse,
+  Category,
+  CategoryListResponse,
+  NotFoundError,
+  Product,
+  ProductListResponse,
+  RobotsResponse,
+  Site,
+  SitemapResponse,
+} from "./types";
 
 /**
  * Backend base URL used on the server. Falls back to the compose service name
@@ -64,4 +75,67 @@ export async function getProduct(
   opts: FetchOptions = {},
 ): Promise<Product> {
   return apiFetch<Product>(`/api/products/${encodeURIComponent(id)}`, opts);
+}
+
+export async function getCurrentSite(opts: FetchOptions = {}): Promise<Site> {
+  return apiFetch<Site>("/api/sites/current", opts);
+}
+
+export async function listCategories(
+  opts: FetchOptions = {},
+): Promise<CategoryListResponse> {
+  return apiFetch<CategoryListResponse>("/api/categories", opts);
+}
+
+export async function getCategory(
+  slug: string,
+  opts: FetchOptions = {},
+): Promise<Category> {
+  return apiFetch<Category>(
+    `/api/categories/${encodeURIComponent(slug)}`,
+    opts,
+  );
+}
+
+export type ListArticlesParams = {
+  category?: string;
+  limit?: number;
+  offset?: number;
+};
+
+export async function listArticles(
+  params: ListArticlesParams = {},
+  opts: FetchOptions = {},
+): Promise<ArticleListResponse> {
+  const search = new URLSearchParams();
+  if (params.category) search.set("category", params.category);
+  if (params.limit != null) search.set("limit", String(params.limit));
+  if (params.offset != null) search.set("offset", String(params.offset));
+  const query = search.toString();
+  return apiFetch<ArticleListResponse>(
+    `/api/articles${query ? `?${query}` : ""}`,
+    opts,
+  );
+}
+
+export async function getArticle(
+  slug: string,
+  opts: FetchOptions = {},
+): Promise<Article> {
+  return apiFetch<Article>(
+    `/api/articles/${encodeURIComponent(slug)}`,
+    opts,
+  );
+}
+
+export async function getSitemap(
+  opts: FetchOptions = {},
+): Promise<SitemapResponse> {
+  return apiFetch<SitemapResponse>("/api/sitemap", opts);
+}
+
+export async function getRobots(
+  opts: FetchOptions = {},
+): Promise<RobotsResponse> {
+  return apiFetch<RobotsResponse>("/api/robots", opts);
 }

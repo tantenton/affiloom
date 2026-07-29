@@ -33,6 +33,13 @@ class Settings(BaseSettings):
     RABBITMQ_EXCHANGE: str = "affiloom.events"
     RABBITMQ_ROUTING_KEY: str = "sync.completed"
 
+    # M5 content generation. AI stays disabled unless explicitly enabled and
+    # credentials are supplied by the deployment.
+    CONTENT_AI_ENABLED: bool = False
+    CONTENT_AI_PROVIDER: str = ""
+    CONTENT_AI_MODEL: str = ""
+    CONTENT_AI_API_KEY: str = ""
+
     @property
     def cors_origins(self) -> list[str]:
         return [

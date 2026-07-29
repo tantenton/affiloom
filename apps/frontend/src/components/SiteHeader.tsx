@@ -17,6 +17,12 @@ export function SiteHeader() {
           >
             Katalog
           </Link>
+          <Link
+            href="/artikel"
+            className="text-slate-600 hover:text-slate-900"
+          >
+            Artikel
+          </Link>
         </nav>
       </div>
     </header>

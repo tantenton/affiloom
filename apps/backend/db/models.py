@@ -180,11 +180,170 @@ class SyncRun(Base):
     merchant: Mapped[Merchant] = relationship(back_populates="sync_runs")
 
 
+class Site(Base):
+    """SEO site / domain surface.
+
+    Kept as a first-class row so a future multi-brand setup can attach articles
+    and canonical URLs to a specific domain without leaking the value into
+    every request.
+    """
+
+    __tablename__ = "sites"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=_uuid)
+    slug: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    domain: Mapped[str] = mapped_column(String(255), nullable=False)
+    name: Mapped[str] = mapped_column(String(128), nullable=False)
+    tagline: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    language: Mapped[str] = mapped_column(String(16), nullable=False, default="id-ID")
+    default_locale: Mapped[str] = mapped_column(
+        String(16), nullable=False, default="id_ID"
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, onupdate=_utcnow, nullable=False
+    )
+
+    categories: Mapped[list["ArticleCategory"]] = relationship(
+        back_populates="site", cascade="all, delete-orphan"
+    )
+    articles: Mapped[list["Article"]] = relationship(
+        back_populates="site", cascade="all, delete-orphan"
+    )
+
+
+class ArticleCategory(Base):
+    """Editorial category grouping articles (topic vertical)."""
+
+    __tablename__ = "article_categories"
+    __table_args__ = (
+        UniqueConstraint("site_id", "slug", name="uq_article_categories_site_slug"),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=_uuid)
+    site_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("sites.id", ondelete="CASCADE"), nullable=False
+    )
+    slug: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(128), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, onupdate=_utcnow, nullable=False
+    )
+
+    site: Mapped[Site] = relationship(back_populates="categories")
+    articles: Mapped[list["Article"]] = relationship(back_populates="category")
+
+
+class ArticleStatus(str, enum.Enum):
+    DRAFT = "draft"
+    PUBLISHED = "published"
+    ARCHIVED = "archived"
+
+
+class Article(Base):
+    """SEO article with canonical slug + status lifecycle.
+
+    Deterministic drafts persist under ``DRAFT`` until an admin publishes them.
+    ``body_md`` is Markdown and never contains raw HTML from AI providers so
+    the render layer stays predictable. AI-provider generation is opt-in and
+    disabled when credentials are absent.
+    """
+
+    __tablename__ = "articles"
+    __table_args__ = (
+        UniqueConstraint("site_id", "slug", name="uq_articles_site_slug"),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=_uuid)
+    site_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("sites.id", ondelete="CASCADE"), nullable=False
+    )
+    category_id: Mapped[Optional[str]] = mapped_column(
+        String(64),
+        ForeignKey("article_categories.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    slug: Mapped[str] = mapped_column(String(200), nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    excerpt: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    body_md: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    meta_title: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    meta_description: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    canonical_path: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    language: Mapped[str] = mapped_column(String(16), nullable=False, default="id-ID")
+    status: Mapped[ArticleStatus] = mapped_column(
+        Enum(ArticleStatus, name="article_status", native_enum=False, length=16),
+        nullable=False,
+        default=ArticleStatus.DRAFT,
+        index=True,
+    )
+    ai_provider: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    ai_model: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    published_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, onupdate=_utcnow, nullable=False
+    )
+
+    site: Mapped[Site] = relationship(back_populates="articles")
+    category: Mapped[Optional[ArticleCategory]] = relationship(back_populates="articles")
+    product_links: Mapped[list["ArticleProduct"]] = relationship(
+        back_populates="article", cascade="all, delete-orphan"
+    )
+
+
+class ArticleProduct(Base):
+    """Internal link between article and product (with ordering + suggestion score)."""
+
+    __tablename__ = "article_products"
+    __table_args__ = (
+        UniqueConstraint(
+            "article_id", "product_id", name="uq_article_products_article_product"
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=_uuid)
+    article_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("articles.id", ondelete="CASCADE"), nullable=False
+    )
+    product_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("products.id", ondelete="CASCADE"), nullable=False
+    )
+    position: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    score: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, nullable=False
+    )
+
+    article: Mapped[Article] = relationship(back_populates="product_links")
+    product: Mapped[Product] = relationship()
+
+
 __all__ = [
+    "Article",
+    "ArticleCategory",
+    "ArticleProduct",
+    "ArticleStatus",
     "Base",
     "Merchant",
     "Offer",
     "Product",
+    "Site",
     "SyncRun",
     "SyncRunStatus",
 ]
