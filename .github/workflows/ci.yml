@@ -39,4 +39,10 @@ jobs:
         with:
           version: "0.4.0"
       - run: uv sync --frozen
+      - name: Migration check (SQLite)
+        run: |
+          rm -f /tmp/affiloom-ci.db
+          DATABASE_URL="sqlite+aiosqlite:////tmp/affiloom-ci.db" uv run alembic upgrade head
+          DATABASE_URL="sqlite+aiosqlite:////tmp/affiloom-ci.db" uv run alembic check
+          DATABASE_URL="sqlite+aiosqlite:////tmp/affiloom-ci.db" uv run alembic downgrade base
       - run: uv run pytest tests/ -q

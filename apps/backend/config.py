@@ -22,6 +22,17 @@ class Settings(BaseSettings):
     # Comma-separated in the environment; parsed lazily below.
     CORS_ORIGINS: str = "http://localhost:3000"
 
+    # M4 admin + sync knobs.
+    ADMIN_API_TOKEN: str = ""
+    SYNC_MAX_ITEMS: int = 500
+    MEILI_INDEX: str = "products"
+    MEILI_ENABLED: bool = False
+    # Best-effort event emission; sync stays green when either is unreachable.
+    REDIS_ENABLED: bool = False
+    RABBITMQ_ENABLED: bool = False
+    RABBITMQ_EXCHANGE: str = "affiloom.events"
+    RABBITMQ_ROUTING_KEY: str = "sync.completed"
+
     @property
     def cors_origins(self) -> list[str]:
         return [

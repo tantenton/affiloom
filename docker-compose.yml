@@ -60,12 +60,17 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
-    environment:
+    environment: &backend_env
       DATABASE_URL: postgresql+asyncpg://affiloom:affiloom@postgres:5432/affiloom
       REDIS_URL: redis://redis:6379/0
-      RABBITMQ_URL: amqp://guest:***@rabbitmq:5672/
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
       MEILI_HOST: http://meilisearch:7700
       MEILI_MASTER_KEY: masterKey
+      MEILI_INDEX: products
+      MEILI_ENABLED: "true"
+      REDIS_ENABLED: "true"
+      RABBITMQ_ENABLED: "true"
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:-}
       S3_ENDPOINT: http://minio:9000
       S3_ACCESS_KEY: minioadmin
       S3_SECRET_KEY: minioadmin
@@ -76,6 +81,19 @@ services:
       - rabbitmq
       - meilisearch
       - minio
+
+  sync-worker:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: ["python", "-m", "workers.sync_worker", "--interval", "300"]
+    environment: *backend_env
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - meilisearch
 
   frontend:
     build:
