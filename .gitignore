@@ -1,0 +1,17 @@
+node_modules
+.next
+out
+dist
+build
+.env*
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+*.egg-info
+dist-info
+.DS_Store
+.git
+.hermes-*
