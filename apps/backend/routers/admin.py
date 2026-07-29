@@ -145,4 +145,24 @@ async def get_sync_run(
     return _serialize(run, slug)
 
 
+@router.get(
+    "/audit",
+    dependencies=[Depends(_require_admin_token)],
+)
+async def run_admin_audit(
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    """Run the daily audit on demand and return actionable findings."""
+    from services.audit import finding_to_dict, run_audit
+
+    findings = await run_audit(session)
+    return {
+        "total": len(findings),
+        "critical": sum(1 for f in findings if f.severity.value == "critical"),
+        "warning": sum(1 for f in findings if f.severity.value == "warning"),
+        "info": sum(1 for f in findings if f.severity.value == "info"),
+        "findings": [finding_to_dict(f) for f in findings],
+    }
+
+
 __all__ = ["router"]

@@ -49,4 +49,52 @@ class SyncTriggerResponse(BaseModel):
     error: Optional[str] = None
 
 
-__all__ = ["SyncRunListResponse", "SyncRunOut", "SyncTriggerResponse"]
+# ── M6 Admin Dashboard ────────────────────────────────────────────────────
+
+
+class ProductStats(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    total: int
+    active: int
+    inactive: int
+    merchants: int
+
+
+class SyncHealthStats(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    total_runs: int
+    successful: int
+    failed: int
+    healthy: bool
+    last_success: dict[str, str] = {}
+
+
+class ContentStats(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    articles_total: int
+    articles_published: int
+    articles_draft: int
+    articles_archived: int
+    missing_excerpt: int
+
+
+class AdminDashboardResponse(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    products: ProductStats
+    sync: SyncHealthStats
+    content: ContentStats
+
+
+__all__ = [
+    "AdminDashboardResponse",
+    "ContentStats",
+    "ProductStats",
+    "SyncHealthStats",
+    "SyncRunListResponse",
+    "SyncRunOut",
+    "SyncTriggerResponse",
+]

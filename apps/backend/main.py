@@ -7,6 +7,7 @@ from config import settings
 from db.session import dispose_engine
 from routers.admin import router as admin_router
 from routers.admin_content import router as admin_content_router
+from routers.admin_dashboard import router as admin_dashboard_router
 from routers.content import router as content_router
 from routers.health import router as health_router
 from routers.products import router as products_router
@@ -43,3 +44,4 @@ app.include_router(content_router)
 app.include_router(sitemap_router)
 app.include_router(admin_router)
 app.include_router(admin_content_router)
+app.include_router(admin_dashboard_router)
