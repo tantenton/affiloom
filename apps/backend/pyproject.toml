@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["adapters", "routers", "config.py", "main.py"]
+packages = ["adapters", "routers", "schemas", "config.py", "dependencies.py", "main.py"]
 
 [tool.ruff]
 line-length = 88

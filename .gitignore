@@ -4,6 +4,7 @@ out
 dist
 build
 .env*
+!.env.example
 .venv
 venv
 __pycache__

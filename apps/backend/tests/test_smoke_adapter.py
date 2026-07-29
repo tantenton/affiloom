@@ -19,9 +19,12 @@ def test_interface_impl() -> None:
 
 
 def test_demo_items_count() -> None:
-    """Smoke: demo_items returns exactly 2 items."""
+    """Smoke: demo_items returns the deterministic catalog of 10 items."""
     items = demo_items()
-    assert len(items) == 2
+    assert len(items) == 10
+    ids = [item.id for item in items]
+    assert ids == sorted(ids, key=lambda s: int(s.split("-")[1]))
+    assert len(set(ids)) == len(ids)
 
 
 @pytest.mark.anyio
