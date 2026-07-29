@@ -18,6 +18,9 @@ dependencies = [
     "httpx>=0.27.0",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["adapters", "routers", "config.py", "main.py"]
+
 [tool.ruff]
 line-length = 88
 target-version = "py311"

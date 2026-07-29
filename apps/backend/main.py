@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 
-app = FastAPI(title="Affiloom Backend")
+from config import settings
+from routers.health import router as health_router
 
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION)
+app.include_router(health_router)
