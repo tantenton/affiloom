@@ -1,0 +1,7 @@
+Build Affiloom milestone M1. Current repo: /home/ubuntu/affiloom. Tasks:
+1. Read pyproject.toml in apps/backend/ and fix Python version to >=3.11
+2. Create backend/main.py: hello health endpoint using FastAPI
+3. Create apps/backend/tests/test_health.py with test for /health
+4. Run: cd apps/backend && python -m pytest tests/ -v
+5. Commit only if tests pass: `feat: affiloom m1 backend foundation`
+Exit after commit or error.
