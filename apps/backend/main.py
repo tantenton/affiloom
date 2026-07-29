@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from config import settings
 from routers import health
 

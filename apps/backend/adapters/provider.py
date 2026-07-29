@@ -1,32 +1,36 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from datetime import datetime
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Iterable, List, Mapping
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class MarketplaceItem:
     id: str
     source: str
     title: str
     url: str
-    image_url: str | None
-    price: float | None
-    currency: str | None
-    commission_rate: float | None
-    last_seen_at: datetime
+    image_url: str | None = None
+    price: float | None = None
+    currency: str | None = None
+    commission_rate: float | None = None
+    last_seen_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class MarketplaceProviderAdapter(ABC):
-    """Contract for read-only provider integrations.
+    """Contract for compliant affiliate provider integrations.
 
     Concrete adapters must be deterministic and must not perform automated
-    browsing or scraping beyond what a partner API allows.
+    browsing or scraping beyond what a partner API explicitly allows.
     """
 
     @property
     @abstractmethod
-    def name(self) -> str:
+    def name(self) -> str: ...
+
+    @abstractmethod
+    async def health(self) -> dict:
+        """Return provider health / connectivity status."""
         ...
 
     @abstractmethod
@@ -39,12 +43,17 @@ class MarketplaceProviderAdapter(ABC):
 
 
 class DeterministicDemoAdapter(MarketplaceProviderAdapter):
+    """Deterministic sandbox adapter for local development and tests."""
+
     @property
     def name(self) -> str:
         return "demo"
 
     def __init__(self, seed: Mapping[str, MarketplaceItem]) -> None:
-        self._items = list(seed)
+        self._items: List[MarketplaceItem] = list(seed.values())
+
+    async def health(self) -> dict:
+        return {"provider": self.name, "ready": True}
 
     async def search(self, query: str, *, limit: int = 20) -> Iterable[MarketplaceItem]:
         q = query.lower()
@@ -58,14 +67,14 @@ class DeterministicDemoAdapter(MarketplaceProviderAdapter):
 
 
 def demo_items() -> List[MarketplaceItem]:
-    now = datetime.utcnow()
+    """Deterministic fixed seed for tests and local demos."""
+    now = datetime.now(timezone.utc)
     return [
         MarketplaceItem(
             id="demo-1",
             source="demo",
             title="Tas Jinjing Kanvas Eco",
             url="https://example.com/demo-1",
-            image_url=None,
             price=125000.0,
             currency="IDR",
             commission_rate=0.08,
@@ -76,10 +85,18 @@ def demo_items() -> List[MarketplaceItem]:
             source="demo",
             title="Botol Minum Isulang 1L",
             url="https://example.com/demo-2",
-            image_url=None,
             price=89000.0,
             currency="IDR",
             commission_rate=0.06,
             last_seen_at=now,
         ),
     ]
+
+
+__all__ = [
+    "MarketplaceItem",
+    "MarketplaceProviderAdapter",
+    "DeterministicDemoAdapter",
+    "demo_items",
+]
+
