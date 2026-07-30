@@ -2,7 +2,9 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/frontend/package.json apps/frontend/
-RUN corepack enable && pnpm install --frozen-lockfile --filter=frontend
+RUN corepack enable \
+    && corepack prepare pnpm@9.15.4 --activate \
+    && pnpm install --frozen-lockfile --filter=frontend
 
 FROM node:20-alpine AS builder
 WORKDIR /app
@@ -11,7 +13,9 @@ COPY --from=deps /app/apps/frontend/node_modules ./apps/frontend/node_modules
 COPY apps/frontend/ apps/frontend/
 COPY package.json pnpm-workspace.yaml ./
 WORKDIR /app/apps/frontend
-RUN pnpm build
+RUN corepack enable \
+    && corepack prepare pnpm@9.15.4 --activate \
+    && pnpm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app

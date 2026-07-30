@@ -12,7 +12,7 @@ Usage
     log = get_logger(__name__)
 
     log.info("sync: started", extra={"merchant": "demo", "run_id": "..."})
-    # {"ts":"...","svc":"services.sync","level":"INFO","msg":"sync: started","merchant":"demo","run_id":"..."}
+    # {"ts":"...","svc":"services.sync","level":"INFO","msg":"sync started"}
 """
 
 from __future__ import annotations
@@ -25,13 +25,32 @@ from typing import Any
 
 
 class _JsonFormatter(logging.Formatter):
-    _RESERVED = frozenset({
-        "name", "msg", "args", "levelname", "levelno", "pathname",
-        "filename", "module", "exc_info", "exc_text", "stack_info",
-        "lineno", "funcName", "created", "msecs", "relativeCreated",
-        "thread", "threadName", "processName", "process", "taskName",
-        "message",
-    })
+    _RESERVED = frozenset(
+        {
+            "name",
+            "msg",
+            "args",
+            "levelname",
+            "levelno",
+            "pathname",
+            "filename",
+            "module",
+            "exc_info",
+            "exc_text",
+            "stack_info",
+            "lineno",
+            "funcName",
+            "created",
+            "msecs",
+            "relativeCreated",
+            "thread",
+            "threadName",
+            "processName",
+            "process",
+            "taskName",
+            "message",
+        }
+    )
 
     def format(self, record: logging.LogRecord) -> str:
         payload: dict[str, Any] = {

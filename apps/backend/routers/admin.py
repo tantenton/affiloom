@@ -7,6 +7,8 @@ production deploy fails closed instead of exposing the trigger endpoint.
 
 from __future__ import annotations
 
+import hmac
+
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,11 +39,9 @@ def _require_admin_token(
             detail="Missing bearer token",
         )
     provided = authorization[len("Bearer ") :].strip()
-    # Constant-time-ish comparison; the tokens are short and the exposure
-    # is admin-only, but avoid short-circuit compare regardless.
-    if len(provided) != len(token) or not all(
-        a == b for a, b in zip(provided, token)
-    ):
+    # Constant-time comparison via compare_digest; avoids timing leakage from
+    # short-circuit length checks.
+    if not hmac.compare_digest(provided.encode(), token.encode()):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid admin token",

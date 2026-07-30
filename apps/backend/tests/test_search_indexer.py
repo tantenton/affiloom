@@ -18,8 +18,18 @@ async def test_in_memory_indexer_upsert_and_search() -> None:
     idx = InMemoryIndexer()
     await idx.upsert(
         [
-            {"id": "1", "title": "Tas Jinjing Eco", "description": "", "category": "Fashion"},
-            {"id": "2", "title": "Botol Minum", "description": "", "category": "Peralatan"},
+            {
+                "id": "1",
+                "title": "Tas Jinjing Eco",
+                "description": "",
+                "category": "Fashion",
+            },
+            {
+                "id": "2",
+                "title": "Botol Minum",
+                "description": "",
+                "category": "Peralatan",
+            },
         ]
     )
 

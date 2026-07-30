@@ -50,9 +50,7 @@ def test_admin_rejects_wrong_token(admin_client: TestClient) -> None:
     assert r.status_code == 403
 
 
-def test_admin_503_when_token_not_configured(
-    initialized_db: str, monkeypatch
-) -> None:
+def test_admin_503_when_token_not_configured(initialized_db: str, monkeypatch) -> None:
     monkeypatch.setattr(settings, "ADMIN_API_TOKEN", "")
     with TestClient(app) as client:
         r = client.post(

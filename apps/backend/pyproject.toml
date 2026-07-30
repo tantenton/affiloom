@@ -44,6 +44,12 @@ packages = [
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+markers = [
+    "integration: tests that require a running backend on localhost:8000 (docker stack)",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:fastapi.testclient",
+]
 
 [tool.ruff]
 line-length = 88

@@ -33,8 +33,7 @@ class ContentAIAdapter(ABC):
     def model(self) -> str: ...
 
     @abstractmethod
-    async def generate_draft(self, prompt: str) -> ContentDraft:
-        ...
+    async def generate_draft(self, prompt: str) -> ContentDraft: ...
 
 
 class NullContentAIAdapter(ContentAIAdapter):

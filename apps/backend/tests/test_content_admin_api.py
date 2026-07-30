@@ -158,9 +158,7 @@ def test_publish_missing_article_returns_404(admin_client: TestClient) -> None:
 def test_draft_with_ai_disabled_falls_back_to_deterministic(
     admin_client: TestClient, monkeypatch
 ) -> None:
-    """When CONTENT_AI_ENABLED=False and use_ai=True the request must not call
-    an external provider and instead surface a deterministic draft.
-    """
+    """When CONTENT_AI_ENABLED=False and use_ai=True the request must fail closed."""  # noqa: E501
     monkeypatch.setattr(settings, "CONTENT_AI_ENABLED", False)
     admin_client.post(
         "/api/admin/content/sites",

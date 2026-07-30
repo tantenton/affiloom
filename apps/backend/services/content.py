@@ -6,12 +6,11 @@ import re
 import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Optional
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from adapters.ai import ContentAIAdapter, get_content_ai_adapter
+from adapters.ai import ContentDraft, get_content_ai_adapter
 from config import settings
 from db.models import (
     Article,
@@ -47,13 +46,11 @@ class LinkScore:
     reason: str
 
 
-async def resolve_site(
-    session: AsyncSession, slug: str
-) -> Site:
+async def resolve_site(session: AsyncSession, slug: str) -> Site:
     """Get or create the site row."""
-    site = (await session.execute(
-        select(Site).where(Site.slug == slug)
-    )).scalar_one_or_none()
+    site = (
+        await session.execute(select(Site).where(Site.slug == slug))
+    ).scalar_one_or_none()
     if site is None:
         site = Site(
             slug=slug,
@@ -80,12 +77,14 @@ async def generate_draft(
     site = await resolve_site(session, site_slug)
     category: ArticleCategory | None = None
     if category_slug:
-        category = (await session.execute(
-            select(ArticleCategory).where(
-                ArticleCategory.site_id == site.id,
-                ArticleCategory.slug == category_slug,
+        category = (
+            await session.execute(
+                select(ArticleCategory).where(
+                    ArticleCategory.site_id == site.id,
+                    ArticleCategory.slug == category_slug,
+                )
             )
-        )).scalar_one_or_none()
+        ).scalar_one_or_none()
 
     slug = _slugify(title)
 
@@ -156,9 +155,9 @@ async def generate_internal_links(
     limit: int = 5,
 ) -> list[LinkScore]:
     """Score known products by token overlap against the article text."""
-    article = (await session.execute(
-        select(Article).where(Article.id == article_id)
-    )).scalar_one_or_none()
+    article = (
+        await session.execute(select(Article).where(Article.id == article_id))
+    ).scalar_one_or_none()
     if article is None:
         return []
 
@@ -183,17 +182,19 @@ async def generate_internal_links(
         jaccard = len(overlap) / len(union)
 
         if jaccard > 0.05:
-            scored.append(LinkScore(
-                product_id=prod.id,
-                title=prod.title,
-                category=prod.category,
-                score=round(jaccard, 4),
-                reason=(
-                    "kecocokan kata kunci"
-                    if jaccard > 0.2
-                    else "keterkaitan ringan"
-                ),
-            ))
+            scored.append(
+                LinkScore(
+                    product_id=prod.id,
+                    title=prod.title,
+                    category=prod.category,
+                    score=round(jaccard, 4),
+                    reason=(
+                        "kecocokan kata kunci"
+                        if jaccard > 0.2
+                        else "keterkaitan ringan"
+                    ),
+                )
+            )
 
     scored.sort(key=lambda x: x.score, reverse=True)
     return scored[:limit]
@@ -204,8 +205,6 @@ async def _deterministic_draft(
     keyword: str,
     product_ids: list[str],
 ) -> ContentDraft:
-    from adapters.ai import ContentDraft
-
     slug = _slugify(title)
     products_ref = ""
     if product_ids:
@@ -275,12 +274,14 @@ async def upsert_category(
     description: str | None = None,
 ) -> ArticleCategory:
     site = await resolve_site(session, site_slug)
-    cat = (await session.execute(
-        select(ArticleCategory).where(
-            ArticleCategory.site_id == site.id,
-            ArticleCategory.slug == slug,
+    cat = (
+        await session.execute(
+            select(ArticleCategory).where(
+                ArticleCategory.site_id == site.id,
+                ArticleCategory.slug == slug,
+            )
         )
-    )).scalar_one_or_none()
+    ).scalar_one_or_none()
     if cat is None:
         cat = ArticleCategory(
             site_id=site.id,

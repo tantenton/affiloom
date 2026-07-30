@@ -97,6 +97,7 @@ any contextual fields passed via `extra=`.
 
 ```python
 from services.logging import get_logger
+
 log = get_logger(__name__)
 log.info("sync: started", extra={"merchant": "demo", "run_id": "..."})
 ```

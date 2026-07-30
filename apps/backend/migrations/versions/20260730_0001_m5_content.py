@@ -1,9 +1,10 @@
-"""m5: SEO content (sites, article_categories, articles, article_products)
+"""m5: SEO content (sites, article_categories, articles, article_products).
 
 Revision ID: 20260730_0001
 Revises: 20260729_0001
 Create Date: 2026-07-30 00:00:00
 """
+
 from __future__ import annotations
 
 from typing import Sequence, Union
@@ -35,9 +36,14 @@ def upgrade() -> None:
         sa.Column("domain", sa.String(length=255), nullable=False),
         sa.Column("name", sa.String(length=128), nullable=False),
         sa.Column("tagline", sa.String(length=255), nullable=True),
-        sa.Column("language", sa.String(length=16), nullable=False, server_default="id-ID"),
         sa.Column(
-            "default_locale", sa.String(length=16), nullable=False, server_default="id_ID"
+            "language", sa.String(length=16), nullable=False, server_default="id-ID"
+        ),
+        sa.Column(
+            "default_locale",
+            sa.String(length=16),
+            nullable=False,
+            server_default="id_ID",
         ),
         sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.true()),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
@@ -59,13 +65,9 @@ def upgrade() -> None:
         sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.true()),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
-        sa.UniqueConstraint(
-            "site_id", "slug", name="uq_article_categories_site_slug"
-        ),
+        sa.UniqueConstraint("site_id", "slug", name="uq_article_categories_site_slug"),
     )
-    op.create_index(
-        "ix_article_categories_slug", "article_categories", ["slug"]
-    )
+    op.create_index("ix_article_categories_slug", "article_categories", ["slug"])
     op.create_index(
         "ix_article_categories_is_active", "article_categories", ["is_active"]
     )
@@ -92,7 +94,9 @@ def upgrade() -> None:
         sa.Column("meta_title", sa.String(length=255), nullable=True),
         sa.Column("meta_description", sa.String(length=500), nullable=True),
         sa.Column("canonical_path", sa.String(length=512), nullable=True),
-        sa.Column("language", sa.String(length=16), nullable=False, server_default="id-ID"),
+        sa.Column(
+            "language", sa.String(length=16), nullable=False, server_default="id-ID"
+        ),
         sa.Column("status", _ARTICLE_STATUS, nullable=False, server_default="draft"),
         sa.Column("ai_provider", sa.String(length=64), nullable=True),
         sa.Column("ai_model", sa.String(length=128), nullable=True),
@@ -137,9 +141,7 @@ def downgrade() -> None:
     op.drop_index("ix_articles_status", table_name="articles")
     op.drop_index("ix_articles_slug", table_name="articles")
     op.drop_table("articles")
-    op.drop_index(
-        "ix_article_categories_is_active", table_name="article_categories"
-    )
+    op.drop_index("ix_article_categories_is_active", table_name="article_categories")
     op.drop_index("ix_article_categories_slug", table_name="article_categories")
     op.drop_table("article_categories")
     op.drop_table("sites")

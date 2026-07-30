@@ -177,9 +177,7 @@ async def _deactivate_missing(
         prod.is_active = False
         deactivated += 1
         await session.execute(
-            update(Offer)
-            .where(Offer.product_id == prod.id)
-            .values(is_active=False)
+            update(Offer).where(Offer.product_id == prod.id).values(is_active=False)
         )
     return deactivated
 
@@ -193,10 +191,14 @@ async def _index_products(
 
     Returns the number of documents pushed.
     """
-    stmt = select(Product, Offer).join(Offer, Offer.product_id == Product.id).where(
-        Product.merchant_id == merchant.id,
-        Product.is_active.is_(True),
-        Offer.is_active.is_(True),
+    stmt = (
+        select(Product, Offer)
+        .join(Offer, Offer.product_id == Product.id)
+        .where(
+            Product.merchant_id == merchant.id,
+            Product.is_active.is_(True),
+            Offer.is_active.is_(True),
+        )
     )
     rows = (await session.execute(stmt)).all()
     docs: list[dict] = []
@@ -267,9 +269,7 @@ async def run_sync(
 
         seen = created = updated_count = deactivated = 0
         try:
-            items, total = await adapter.list(
-                limit=settings.SYNC_MAX_ITEMS, offset=0
-            )
+            items, total = await adapter.list(limit=settings.SYNC_MAX_ITEMS, offset=0)
             now = datetime.now(timezone.utc)
             seen_ids: set[str] = set()
             for item in items:

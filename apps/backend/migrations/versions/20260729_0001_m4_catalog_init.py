@@ -1,9 +1,10 @@
-"""m4: catalog persistence init (merchants, products, offers, sync_runs)
+"""m4: catalog persistence init (merchants, products, offers, sync_runs).
 
 Revision ID: 20260729_0001
 Revises:
 Create Date: 2026-07-29 00:00:00
 """
+
 from __future__ import annotations
 
 from typing import Sequence, Union

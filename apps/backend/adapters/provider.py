@@ -45,12 +45,12 @@ class MarketplaceProviderAdapter(ABC):
         ...
 
     @abstractmethod
-    async def search(self, query: str, *, limit: int = 20) -> Iterable[MarketplaceItem]:
-        ...
+    async def search(
+        self, query: str, *, limit: int = 20
+    ) -> Iterable[MarketplaceItem]: ...
 
     @abstractmethod
-    async def detail(self, item_id: str) -> MarketplaceItem | None:
-        ...
+    async def detail(self, item_id: str) -> MarketplaceItem | None: ...
 
 
 class DeterministicDemoAdapter(MarketplaceProviderAdapter):
@@ -74,7 +74,7 @@ class DeterministicDemoAdapter(MarketplaceProviderAdapter):
         offset: int = 0,
         query: str | None = None,
     ) -> tuple[List[MarketplaceItem], int]:
-        """Return (page, total) after optional case-insensitive title/category filter."""
+        """Return (page, total) after optional case-insensitive title/category filter."""  # noqa: E501
         pool = list(self._items)
         if query:
             q = query.lower().strip()

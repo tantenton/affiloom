@@ -82,7 +82,9 @@ async def _run_with_retry(
             last_result = SyncResult(
                 run_id="",
                 merchant_slug="demo",
-                status=__import__("db.models", fromlist=["SyncRunStatus"]).SyncRunStatus.FAILED,
+                status=__import__(
+                    "db.models", fromlist=["SyncRunStatus"]
+                ).SyncRunStatus.FAILED,
                 seen=0,
                 created=0,
                 updated=0,
@@ -94,7 +96,9 @@ async def _run_with_retry(
             last_result = SyncResult(
                 run_id="",
                 merchant_slug="demo",
-                status=__import__("db.models", fromlist=["SyncRunStatus"]).SyncRunStatus.FAILED,
+                status=__import__(
+                    "db.models", fromlist=["SyncRunStatus"]
+                ).SyncRunStatus.FAILED,
                 seen=0,
                 created=0,
                 updated=0,
@@ -128,7 +132,11 @@ async def main_async(args: argparse.Namespace) -> int:
     setup_logging(args.log_level)
 
     if args.interval and args.interval > 0:
-        log.info("sync_worker: looping every %s s (max_retries=%d)", args.interval, args.max_retries)
+        log.info(
+            "sync_worker: looping every %s s (max_retries=%d)",
+            args.interval,
+            args.max_retries,
+        )
         while True:
             try:
                 result = await _run_with_retry(
@@ -173,7 +181,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--retry-delay",
         type=float,
         default=10.0,
-        help="Base backoff seconds between retries; doubles each attempt (default: 10).",
+        help="Base backoff seconds between retries; doubles each attempt (default: 10).",  # noqa: E501
     )
     p.add_argument(
         "--run-timeout",

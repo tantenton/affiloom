@@ -1,13 +1,14 @@
-"""Admin content endpoints: manage sites, categories, articles, publish, link-suggestions."""
+"""Admin content endpoints: manage sites, categories, articles, publish, link-suggestions."""  # noqa: E501
 
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import Article, ArticleCategory, ArticleStatus, Site
 from db.session import get_session
+from routers.admin import _require_admin_token
 from schemas.content import (
     ArticleCreate,
     ArticleOut,
@@ -27,20 +28,25 @@ from services.content import (
     upsert_category,
 )
 
-from routers.admin import _require_admin_token
-
 router = APIRouter(prefix="/api/admin/content", tags=["admin-content"])
 
 
 # ─── Sites ──────────────────────────────────────────────────────────────
 
-@router.post("/sites", response_model=SiteOut, dependencies=[Depends(_require_admin_token)])
-async def create_site(data: SiteCreate, session: AsyncSession = Depends(get_session)) -> SiteOut:
-    existing = (await session.execute(
-        select(Site).where(Site.slug == data.slug)
-    )).scalar_one_or_none()
+
+@router.post(
+    "/sites", response_model=SiteOut, dependencies=[Depends(_require_admin_token)]
+)
+async def create_site(
+    data: SiteCreate, session: AsyncSession = Depends(get_session)
+) -> SiteOut:
+    existing = (
+        await session.execute(select(Site).where(Site.slug == data.slug))
+    ).scalar_one_or_none()
     if existing:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Site slug already exists")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Site slug already exists"
+        )
     site = Site(
         slug=data.slug,
         domain=data.domain,
@@ -65,7 +71,12 @@ async def create_site(data: SiteCreate, session: AsyncSession = Depends(get_sess
 
 # ── Categories ───────────────────────────────────────────────────────────
 
-@router.post("/categories", response_model=CategoryOut, dependencies=[Depends(_require_admin_token)])
+
+@router.post(
+    "/categories",
+    response_model=CategoryOut,
+    dependencies=[Depends(_require_admin_token)],
+)
 async def create_category(
     data: CategoryCreate, session: AsyncSession = Depends(get_session)
 ) -> CategoryOut:
@@ -109,7 +120,10 @@ async def list_categories_admin(
 
 # ── Articles ─────────────────────────────────────────────────────────────
 
-@router.post("/drafts", response_model=ArticleOut, dependencies=[Depends(_require_admin_token)])
+
+@router.post(
+    "/drafts", response_model=ArticleOut, dependencies=[Depends(_require_admin_token)]
+)
 async def create_article_draft(
     data: DraftRequest, session: AsyncSession = Depends(get_session)
 ) -> ArticleOut:
@@ -150,7 +164,9 @@ async def create_article_draft(
     )
 
 
-@router.post("/articles", response_model=ArticleOut, dependencies=[Depends(_require_admin_token)])
+@router.post(
+    "/articles", response_model=ArticleOut, dependencies=[Depends(_require_admin_token)]
+)
 async def create_article(
     data: ArticleCreate, session: AsyncSession = Depends(get_session)
 ) -> ArticleOut:
@@ -159,12 +175,14 @@ async def create_article(
     site = await resolve_site(session, data.site_slug)
     category_id: str | None = None
     if data.category_slug:
-        cat = (await session.execute(
-            select(ArticleCategory).where(
-                ArticleCategory.site_id == site.id,
-                ArticleCategory.slug == data.category_slug,
+        cat = (
+            await session.execute(
+                select(ArticleCategory).where(
+                    ArticleCategory.site_id == site.id,
+                    ArticleCategory.slug == data.category_slug,
+                )
             )
-        )).scalar_one_or_none()
+        ).scalar_one_or_none()
         if cat:
             category_id = cat.id
 
@@ -233,7 +251,9 @@ async def article_link_suggestions(
     limit: int = Query(default=5, ge=1, le=20),
     session: AsyncSession = Depends(get_session),
 ) -> LinkSuggestionResponse:
-    suggestions = await generate_internal_links(session, article_id=article_id, limit=limit)
+    suggestions = await generate_internal_links(
+        session, article_id=article_id, limit=limit
+    )
     return LinkSuggestionResponse(
         suggestions=[
             LinkSuggestionOut(

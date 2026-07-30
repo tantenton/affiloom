@@ -51,9 +51,7 @@ async def sitemap(
 
     # Include published articles + categories from the active site.
     site = (
-        await session.execute(
-            select(Site).where(Site.is_active.is_(True)).limit(1)
-        )
+        await session.execute(select(Site).where(Site.is_active.is_(True)).limit(1))
     ).scalar_one_or_none()
     if site is not None:
         cat_stmt = select(ArticleCategory).where(

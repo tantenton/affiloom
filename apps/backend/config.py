@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     MEILI_MASTER_KEY: str = "masterKey"
     S3_ENDPOINT: str = "http://localhost:9000"
     S3_ACCESS_KEY: str = "minioadmin"
-    S3_SECRET_KEY: str = "minioadmin"
+    S3_SECRET_KEY: str = "minioadmin"  # noqa: S105  # dev-only default; overridden in prod
     S3_BUCKET: str = "affiloom-assets"
 
     # Comma-separated in the environment; parsed lazily below.
@@ -43,9 +43,7 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> list[str]:
         return [
-            origin.strip()
-            for origin in self.CORS_ORIGINS.split(",")
-            if origin.strip()
+            origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()
         ]
 
 

@@ -31,7 +31,9 @@ async def _run_once() -> dict:
         findings = await run_audit(session)
 
     return {
-        "checked_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
+        "checked_at": __import__("datetime")
+        .datetime.now(__import__("datetime").timezone.utc)
+        .isoformat(),
         "total_findings": len(findings),
         "critical": sum(1 for f in findings if f.severity.value == "critical"),
         "warning": sum(1 for f in findings if f.severity.value == "warning"),

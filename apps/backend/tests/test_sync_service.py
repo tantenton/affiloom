@@ -30,7 +30,9 @@ from services.search import InMemoryIndexer
 from services.sync import run_sync
 
 
-def _seeded_adapter(items: Mapping[str, MarketplaceItem] | None = None) -> DeterministicDemoAdapter:
+def _seeded_adapter(
+    items: Mapping[str, MarketplaceItem] | None = None,
+) -> DeterministicDemoAdapter:
     seed = items if items is not None else {i.id: i for i in demo_items()}
     return DeterministicDemoAdapter(seed)
 

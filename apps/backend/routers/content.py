@@ -37,9 +37,7 @@ async def _get_active_site(session: AsyncSession) -> Site | None:
     empty envelopes so the frontend can still render placeholder shells.
     """
     return (
-        await session.execute(
-            select(Site).where(Site.is_active.is_(True)).limit(1)
-        )
+        await session.execute(select(Site).where(Site.is_active.is_(True)).limit(1))
     ).scalar_one_or_none()
 
 
@@ -121,7 +119,9 @@ async def get_category(
 ) -> CategoryOut:
     site = await _get_active_site(session)
     if site is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
+        )
     cat = (
         await session.execute(
             select(ArticleCategory).where(
@@ -132,7 +132,9 @@ async def get_category(
         )
     ).scalar_one_or_none()
     if cat is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
+        )
     return await _serialize_category(session, cat)
 
 
@@ -243,7 +245,9 @@ async def get_article(
     )
     row = (await session.execute(stmt)).one_or_none()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Article not found"
+        )
     article, cat = row
 
     category_out = (

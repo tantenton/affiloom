@@ -6,7 +6,6 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
 from db.models import Article, ArticleStatus, Merchant, SyncRun, SyncRunStatus

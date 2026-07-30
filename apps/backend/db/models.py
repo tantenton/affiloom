@@ -301,7 +301,9 @@ class Article(Base):
     )
 
     site: Mapped[Site] = relationship(back_populates="articles")
-    category: Mapped[Optional[ArticleCategory]] = relationship(back_populates="articles")
+    category: Mapped[Optional[ArticleCategory]] = relationship(
+        back_populates="articles"
+    )
     product_links: Mapped[list["ArticleProduct"]] = relationship(
         back_populates="article", cascade="all, delete-orphan"
     )

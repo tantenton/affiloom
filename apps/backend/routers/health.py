@@ -149,7 +149,14 @@ async def metrics() -> dict[str, Any]:
     """
     from sqlalchemy import func, select
 
-    from db.models import Article, ArticleStatus, Merchant, Product, SyncRun, SyncRunStatus
+    from db.models import (
+        Article,
+        ArticleStatus,
+        Merchant,
+        Product,
+        SyncRun,
+        SyncRunStatus,
+    )
     from db.session import get_sessionmaker
 
     session_factory = get_sessionmaker()

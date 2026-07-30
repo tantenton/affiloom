@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 import httpx
 
@@ -161,7 +161,9 @@ async def get_indexer() -> SearchIndexer:
                     settings.MEILI_INDEX,
                 )
             else:
-                log.info("search: using InMemoryIndexer (Meilisearch disabled/unreachable)")
+                log.info(
+                    "search: using InMemoryIndexer (Meilisearch disabled/unreachable)"
+                )
                 _indexer = InMemoryIndexer()
     return _indexer
 

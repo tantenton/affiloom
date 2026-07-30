@@ -6,7 +6,6 @@ All endpoints require the admin bearer token.
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
-
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -85,7 +84,9 @@ async def dashboard_summary(
     for slug, run in merchant_syncs:
         if slug not in last_sync_map:
             last_sync_map[slug] = (
-                run.finished_at.isoformat() if run.finished_at else run.started_at.isoformat()
+                run.finished_at.isoformat()
+                if run.finished_at
+                else run.started_at.isoformat()
             )
 
     # ── Content ───────────────────────────────────────────────────────
