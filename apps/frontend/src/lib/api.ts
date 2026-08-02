@@ -51,6 +51,7 @@ async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promise<T> {
 
 export type ListProductsParams = {
   q?: string;
+  category?: string;
   limit?: number;
   offset?: number;
 };
@@ -61,6 +62,7 @@ export async function listProducts(
 ): Promise<ProductListResponse> {
   const search = new URLSearchParams();
   if (params.q) search.set("q", params.q);
+  if (params.category) search.set("category", params.category);
   if (params.limit != null) search.set("limit", String(params.limit));
   if (params.offset != null) search.set("offset", String(params.offset));
   const query = search.toString();

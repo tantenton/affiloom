@@ -24,7 +24,27 @@ export const metadata: Metadata = {
 
 type SearchParams = {
   q?: string;
+  category?: string;
 };
+
+const PRODUCT_CATEGORIES = [
+  "Fashion",
+  "Peralatan",
+  "Kuliner",
+  "Rumah Tangga",
+  "Alat Tulis",
+  "Elektronik",
+  "Olahraga",
+  "Kecantikan",
+];
+
+function categoryHref(q: string, category?: string) {
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (category) params.set("category", category);
+  const query = params.toString();
+  return `/produk${query ? `?${query}` : ""}`;
+}
 
 export default async function ProdukPage({
   searchParams,
@@ -32,11 +52,12 @@ export default async function ProdukPage({
   searchParams: SearchParams;
 }) {
   const query = (searchParams.q ?? "").trim();
+  const category = (searchParams.category ?? "").trim();
 
   let data;
   let errored = false;
   try {
-    data = await listProducts({ q: query || undefined, limit: 24 });
+    data = await listProducts({ q: query || undefined, category: category || undefined, limit: 24 });
   } catch {
     errored = true;
   }
@@ -62,6 +83,21 @@ export default async function ProdukPage({
         <div className="mt-6">
           <AffiliateDisclosure />
         </div>
+
+        <nav aria-label="Filter kategori" className="mt-6 flex flex-wrap gap-2">
+          <CategoryChip href={categoryHref(query)} active={!category}>
+            Semua
+          </CategoryChip>
+          {PRODUCT_CATEGORIES.map((cat) => (
+            <CategoryChip
+              key={cat}
+              href={categoryHref(query, cat)}
+              active={category === cat}
+            >
+              {cat}
+            </CategoryChip>
+          ))}
+        </nav>
 
         {errored ? (
           <ErrorState />
@@ -109,6 +145,26 @@ function ResultsGrid({
         ))}
       </ul>
     </section>
+  );
+}
+
+function CategoryChip({
+  href,
+  active,
+  children,
+}: {
+  href: string;
+  active: boolean;
+  children: React.ReactNode;
+}) {
+  const base = "rounded-full border px-3 py-1 text-sm";
+  const className = active
+    ? `${base} border-slate-900 bg-slate-900 text-white`
+    : `${base} border-slate-300 bg-white text-slate-700 hover:bg-slate-100`;
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
   );
 }
 

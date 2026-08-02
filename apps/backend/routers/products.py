@@ -30,11 +30,18 @@ async def list_products(
         max_length=100,
         description="Case-insensitive substring filter across title and category.",
     ),
+    category: str | None = Query(
+        default=None,
+        max_length=64,
+        description="Exact category filter (case-insensitive).",
+    ),
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     adapter: DeterministicDemoAdapter = Depends(get_catalog_adapter),
 ) -> ProductListResponse:
-    items, total = await adapter.list(limit=limit, offset=offset, query=q)
+    items, total = await adapter.list(
+        limit=limit, offset=offset, query=q, category=category
+    )
     return ProductListResponse(
         items=[ProductOut.from_item(i) for i in items],
         total=total,

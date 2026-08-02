@@ -73,9 +73,17 @@ class DeterministicDemoAdapter(MarketplaceProviderAdapter):
         limit: int = 20,
         offset: int = 0,
         query: str | None = None,
+        category: str | None = None,
     ) -> tuple[List[MarketplaceItem], int]:
-        """Return (page, total) after optional case-insensitive title/category filter."""  # noqa: E501
+        """Return a page after optional text and exact category filters."""
         pool = list(self._items)
+        if category:
+            wanted_category = category.strip().casefold()
+            pool = [
+                item
+                for item in pool
+                if item.category and item.category.casefold() == wanted_category
+            ]
         if query:
             q = query.lower().strip()
             pool = [
