@@ -21,6 +21,7 @@ from routers.content import router as content_router
 from routers.health import router as health_router
 from routers.products import router as products_router
 from routers.sitemap import router as sitemap_router
+from routers.track import router as track_router
 from services.logging import setup_logging
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["100/minute"])
@@ -94,6 +95,7 @@ app.include_router(health_router)
 app.include_router(products_router)
 app.include_router(content_router)
 app.include_router(sitemap_router)
+app.include_router(track_router)
 app.include_router(admin_router)
 app.include_router(admin_content_router)
 app.include_router(admin_dashboard_router)
