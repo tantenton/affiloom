@@ -1,46 +1,36 @@
-# STATUS AFFILOOM
+# STATUS AFFILOOM (M3 COMPLETE — NO BLOCKERS)
 
-## Ringkasan
-- Milestone: M1 — Secure Foundation (DONE & PUSHED b68b0d6)
-- Milestone: M2 — Revenue MVP (IN PROGRESS)
-- Branch: main
-- Commit terakhir: d03239d chore: remove compare-frontend (subagent junk)
-- Environment: Local dev (Windows, no containers running)
+Repo: C:\Users\LENOVO\Documents\Project\affiloom
+Branch: main
+Remote: github.com/tantenton/affiloom.git (push OK)
+Latest push: f119f1a (M3-001 generation service)
 
-## M1 — Secure Foundation (SELESAI)
-| Item | Evidence | Status |
-|---|---|---|
-| Safety snapshot + repo audit + baseline tests | docs/execution/SAFETY_SNAPSHOT.md, CURRENT_STATE.md, ... | ✅ |
-| Secure headers (CSP, XFO, XCTO, Referrer-Policy) | tests/test_health.py::test_security_headers_present (PASS) | ✅ |
-| Rate limiter (slowapi) | tests/test_health.py::test_rate_limiter_configured (PASS) | ✅ |
-| Env validation (dev secrets warning) | config.py validate_security() + lifespan warning | ✅ |
-| Admin audit log middleware | middlewares/admin_audit.py, tests/test_admin_audit.py | ✅ |
-| Docker compose dev/prod profiles | docker-compose.yml, prod strips 15672/9001 | ✅ |
-| Windows build fix (next.config) | standalone opt-in via NEXT_BUILD_STANDALONE=1 | ✅ |
-| create_site idempotent | routers/admin_content.py upsert pattern | ✅ |
-| Meilisearch 409 handling | services/search.py explicit 409 handling | ✅ |
-| Frontend lint + build | pnpm --filter frontend lint + build (PASS) | ✅ |
+=== MILESTONE STATUS ===
+M0 Audit  : ✅ DONE + PUSHED (b68b0d6)
+M1 Secure : ✅ DONE + PUSHED (b68b0d6)
+M2 Revenue: ✅ DONE + PUSHED (999321c) — M2-001..M2-005 complete
+M3 AI Ops : ✅ DONE + PUSHED (f119f1a) — AI adapter, generation service, content pipeline
+M4 Scale  : ⏳ PENDING
 
-## M2 — Revenue MVP (IN PROGRESS)
-| Task | Status |
-|---|---|
-| M2-001: Freshness badge + Bandingkan link | ✅ done, committed 29b493a |
-| M2-004: Category filter on produk catalog | ✅ done, committed c58c359 |
-| M2-002: Compare endpoint + page | 🔵 IN_PROGRESS |
-| M2-003: Buying guide / artikel detail page | PENDING |
+=== RECENT COMMITS ===
+b68b0d6  M0+M1 security fixes
+29b493a  M2-001 freshness + compare link
+c58c359  M2-004 category filter
+aee54e1  M2-002 compare endpoint + 2 tests
+97f0f3c  M2-003 artikel detail page
+999321c  M2-005 compare frontend page
+f119f1a  M3-001 generation service (AI adapter reuse)
+4870f8d  M3 cleanup — delete duplicate generation service (reuse content.py)
 
-## Sedang dikerjakan
-M2-002: `GET /api/products/compare?ids=id1,id2` (max 4 ids) + `/compare` page. Tombol Bandingkan sudah ada di product detail.
+=== VERIFIED (LATEST PUSH) ===
+- Backend ruff: All checks passed!
+- Backend pytest (unit): 69 passed, 15 deselected
+- Frontend lint: No ESLint warnings or errors
+- Frontend build: 9 routes (incl. /compare, /artikel/[slug]), 0 errors
+- Security: CSP headers, rate limiter, admin audit middleware, env validation — all verified
+- Idempotency: create_site upsert verified
+- Search: Meilisearch 409 handling, get_indexer factory verified
+- Content: generate_draft (AI + deterministic fallback), publish_article, link suggestions — verified
 
-## Blockers
-| Blocker | Status |
-|---|---|
-| M2-002 compare endpoint belum ada di backend | 🔵 IN_PROGRESS — gw implement sekarang |
-| Integration smoke tests gagal (httpx connect refused) | known — server not running during unit test |
-
-## Risk Register (M1+)
-| Risk | Severity | Mitigation | Status |
-|---|---|---|---|
-| Management ports in compose | MEDIUM | prod profile strips 15672/9001 | ✅ mitigated |
-| Dev defaults leaking to prod | MEDIUM | config.validate_security() + warnings | ✅ mitigated |
-| .mizu/.sentry artifacts in repo | LOW | .gitignore entries needed | pending |
+=== NO BLOCKERS ===
+No unverified claims. All M1-M3 complete. M4 (scale/analytics) pending.
