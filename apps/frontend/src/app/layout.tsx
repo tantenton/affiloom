@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageviewTracker } from "@/components/Tracking";
 import "./globals.css";
 
 const siteUrl =
@@ -21,7 +22,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body>{children}</body>
+      <body>
+        <PageviewTracker />
+        {children}
+      </body>
     </html>
   );
 }
