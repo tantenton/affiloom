@@ -44,8 +44,23 @@ async def create_site(
         await session.execute(select(Site).where(Site.slug == data.slug))
     ).scalar_one_or_none()
     if existing:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Site slug already exists"
+        # Idempotent: update mutable fields and return existing row.
+        existing.domain = data.domain
+        existing.name = data.name
+        existing.tagline = data.tagline
+        existing.language = data.language
+        existing.default_locale = data.default_locale
+        existing.is_active = True
+        await session.commit()
+        await session.refresh(existing)
+        return SiteOut(
+            id=existing.id,
+            slug=existing.slug,
+            domain=existing.domain,
+            name=existing.name,
+            tagline=existing.tagline,
+            language=existing.language,
+            default_locale=existing.default_locale,
         )
     site = Site(
         slug=data.slug,

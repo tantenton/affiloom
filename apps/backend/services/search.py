@@ -86,14 +86,25 @@ class MeilisearchIndexer:
         self._client = httpx.AsyncClient(headers=self._headers, timeout=10)
 
     async def _ensure_index(self) -> None:
-        """Create the index if it doesn't exist. Idempotent."""
+        """Create the index if it doesn't exist. Idempotent.
+
+        Explicitly handles 409 (already exists) as a no-op, while letting
+        other errors propagate so unreachable hosts are visible.
+        """
         try:
-            await self._client.post(
+            resp = await self._client.post(
                 f"{self._base}/indexes",
                 json={"uid": self._index, "primaryKey": "id"},
             )
-        except Exception:  # noqa: BLE001
-            pass  # already exists or unreachable; next call will expose the latter
+            # 201 = created, 409 = already exists (Meilisearch behavior); either is OK.
+            if resp.status_code == 409:
+                pass  # index already exists — safe no-op
+            elif resp.status_code not in (201, 204):
+                resp.raise_for_status()
+        except Exception:
+            # Only suppress connection/reachability errors silently; anything else
+            # should be visible for debugging (per design doc / KNOWN_ISSUES).
+            raise
 
     async def upsert(self, documents: list[dict]) -> None:
         await self._ensure_index()

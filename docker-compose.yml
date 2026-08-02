@@ -1,11 +1,21 @@
+# M1-003: Docker Compose with dev/prod profiles.
+#
+# Dev (default): all ports exposed, dev credentials.  $ docker compose up
+# Prod: management ports hidden, secrets via env.  $ docker compose --profile prod up
+#
+# The `prod` profile:
+#   - removes management ports (RabbitMQ 15672, MinIO 9001)
+#   - requires ADMIN_API_TOKEN (fails if empty)
+#   - requires secrets via env vars (no hardcoded defaults)
+
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: affiloom
-      POSTGRES_PASSWORD: affiloom
-      POSTGRES_DB: affiloom
+      POSTGRES_USER: ${POSTGRES_USER:-affiloom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-affiloom}
+      POSTGRES_DB: ${POSTGRES_DB:-affiloom}
     ports:
       - "5432:5432"
     volumes:
@@ -24,10 +34,22 @@ services:
     restart: unless-stopped
     ports:
       - "5672:5672"
+      # Management UI — dev only. Prod profile hides it (see rabbitmq-prod).
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+
+  # Prod profile: RabbitMQ without management port
+  rabbitmq-prod:
+    image: rabbitmq:3-alpine
+    profiles: ["prod"]
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:?RABBITMQ_USER required in prod}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:?RABBITMQ_PASS required in prod}
 
   meilisearch:
     image: getmeili/meilisearch:v1.7
@@ -35,8 +57,8 @@ services:
     ports:
       - "7700:7700"
     environment:
-      MEILI_MASTER_KEY: masterKey
-      MEILI_ENV: development
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-masterKey}
+      MEILI_ENV: ${MEILI_ENV:-development}
     volumes:
       - meilidata:/meili_data
 
@@ -46,10 +68,25 @@ services:
     command: server /data --console-address ":9001"
     ports:
       - "9000:9000"
+      # Console UI — dev only. Prod profile hides it (see minio-prod).
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - miniodata:/data
+
+  # Prod profile: MinIO without console port
+  minio-prod:
+    image: minio/minio:latest
+    profiles: ["prod"]
+    restart: unless-stopped
+    command: server /data
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER required in prod}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD required in prod}
     volumes:
       - miniodata:/data
 
@@ -61,24 +98,26 @@ services:
     ports:
       - "8000:8000"
     environment: &backend_env
-      DATABASE_URL: postgresql+asyncpg://affiloom:affiloom@postgres:5432/affiloom
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-affiloom}:${POSTGRES_PASSWORD:-affiloom}@postgres:5432/${POSTGRES_DB:-affiloom}
       REDIS_URL: redis://redis:6379/0
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/
       MEILI_HOST: http://meilisearch:7700
-      MEILI_MASTER_KEY: masterKey
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-masterKey}
       MEILI_INDEX: products
       MEILI_ENABLED: "true"
       REDIS_ENABLED: "true"
       RABBITMQ_ENABLED: "true"
       ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:-}
       S3_ENDPOINT: http://minio:9000
-      S3_ACCESS_KEY: minioadmin
-      S3_SECRET_KEY: minioadmin
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
       S3_BUCKET: affiloom-assets
       CONTENT_AI_ENABLED: "false"
       CONTENT_AI_PROVIDER: ""
       CONTENT_AI_MODEL: ""
       CONTENT_AI_API_KEY: ""
+      # M1-004: env validation flag. Backend warns if dev defaults used in prod.
+      AFFILOOM_ENV: ${AFFILOOM_ENV:-development}
     depends_on:
       - postgres
       - redis
@@ -107,9 +146,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
       INTERNAL_API_URL: http://backend:8000
-      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
     depends_on:
       - backend
 

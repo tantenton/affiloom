@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: process.env.NEXT_BUILD_STANDALONE === "1" ? "standalone" : undefined,
 };
 module.exports = nextConfig;

@@ -1,6 +1,17 @@
 from __future__ import annotations
 
+import logging
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+log = logging.getLogger(__name__)
+
+# Values that must not appear in non-development environments.
+_DEV_DEFAULTS = {
+    "S3_ACCESS_KEY": "minioadmin",
+    "S3_SECRET_KEY": "minioadmin",
+    "MEILI_MASTER_KEY": "masterKey",
+}
 
 
 class Settings(BaseSettings):
@@ -8,6 +19,9 @@ class Settings(BaseSettings):
 
     APP_NAME: str = "affiloom"
     APP_VERSION: str = "0.1.0"
+
+    # Mark the environment. Keep development by default so local dev is not noisy.
+    AFFILOOM_ENV: str = "development"
 
     DATABASE_URL: str = "postgresql+asyncpg://affiloom:affiloom@localhost:5432/affiloom"
     REDIS_URL: str = "redis://localhost:6379/0"
@@ -45,6 +59,38 @@ class Settings(BaseSettings):
         return [
             origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()
         ]
+
+    @property
+    def is_production(self) -> bool:
+        return self.AFFILOOM_ENV.lower() in ("production", "prod", "staging")
+
+    def validate_security(self) -> list[str]:
+        warnings: list[str] = []
+
+        if not self.is_production:
+            return warnings
+
+        for key, dev_val in _DEV_DEFAULTS.items():
+            actual = getattr(self, key, "")
+            if actual == dev_val:
+                warnings.append(
+                    f"SECURITY: {key} is still set to dev default '{dev_val}' "
+                    f"in {self.AFFILOOM_ENV} environment."
+                )
+
+        if not self.ADMIN_API_TOKEN:
+            warnings.append(
+                "SECURITY: ADMIN_API_TOKEN is empty in "
+                f"{self.AFFILOOM_ENV} environment. Admin endpoints will return 503."
+            )
+
+        if "guest:guest" in self.RABBITMQ_URL:
+            warnings.append(
+                "SECURITY: RABBITMQ_URL contains default guest:guest "
+                f"credentials in {self.AFFILOOM_ENV} environment."
+            )
+
+        return warnings
 
 
 settings = Settings()
