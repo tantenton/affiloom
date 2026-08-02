@@ -81,16 +81,26 @@ class ContentStats(BaseModel):
     missing_excerpt: int
 
 
+class AnalyticsStats(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    pageviews_total: int
+    cta_clicks_total: int
+    clicks_today: int
+
+
 class AdminDashboardResponse(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     products: ProductStats
     sync: SyncHealthStats
     content: ContentStats
+    analytics: AnalyticsStats
 
 
 __all__ = [
     "AdminDashboardResponse",
+    "AnalyticsStats",
     "ContentStats",
     "ProductStats",
     "SyncHealthStats",

@@ -12,7 +12,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.models import (
     Article,
     ArticleStatus,
+    CtaClick,
     Merchant,
+    Pageview,
     Product,
     SyncRun,
     SyncRunStatus,
@@ -21,6 +23,7 @@ from db.session import get_session
 from routers.admin import _require_admin_token
 from schemas.admin import (
     AdminDashboardResponse,
+    AnalyticsStats,
     ContentStats,
     ProductStats,
     SyncHealthStats,
@@ -118,6 +121,21 @@ async def dashboard_summary(
         )
     ).scalar_one()
 
+    # ── Analytics ─────────────────────────────────────────────────────
+    pageviews = (
+        await session.execute(select(func.count()).select_from(Pageview))
+    ).scalar_one()
+    cta_clicks = (
+        await session.execute(select(func.count()).select_from(CtaClick))
+    ).scalar_one()
+    clicks_today = (
+        await session.execute(
+            select(func.count())
+            .select_from(CtaClick)
+            .where(CtaClick.created_at >= func.date("now"))
+        )
+    ).scalar_one()
+
     return AdminDashboardResponse(
         products=ProductStats(
             total=int(total_prod),
@@ -138,5 +156,10 @@ async def dashboard_summary(
             articles_draft=int(draft),
             articles_archived=int(archived),
             missing_excerpt=int(missing_excerpt),
+        ),
+        analytics=AnalyticsStats(
+            pageviews_total=int(pageviews),
+            cta_clicks_total=int(cta_clicks),
+            clicks_today=int(clicks_today),
         ),
     )
