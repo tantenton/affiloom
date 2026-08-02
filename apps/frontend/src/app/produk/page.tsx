@@ -66,13 +66,16 @@ export default async function ProdukPage({
     <div className="min-h-screen bg-slate-50">
       <SiteHeader />
 
-      <main className="mx-auto max-w-5xl px-4 py-10">
+      <main className="mx-auto max-w-6xl px-4 py-12">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-              Katalog Produk
+            <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">
+              Katalog
+            </p>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">
+              Produk Kurasi
             </h1>
-            <p className="mt-2 max-w-2xl text-slate-600">
+            <p className="mt-3 max-w-2xl text-slate-600">
               Produk afiliasi kurasi dari mitra marketplace Indonesia. Setiap
               item mencantumkan komisi dan sumber secara terbuka.
             </p>
@@ -80,11 +83,11 @@ export default async function ProdukPage({
           <SearchForm defaultValue={query} />
         </div>
 
-        <div className="mt-6">
+        <div className="mt-8">
           <AffiliateDisclosure />
         </div>
 
-        <nav aria-label="Filter kategori" className="mt-6 flex flex-wrap gap-2">
+        <nav aria-label="Filter kategori" className="mt-8 flex flex-wrap gap-2">
           <CategoryChip href={categoryHref(query)} active={!category}>
             Semua
           </CategoryChip>
@@ -157,10 +160,10 @@ function CategoryChip({
   active: boolean;
   children: React.ReactNode;
 }) {
-  const base = "rounded-full border px-3 py-1 text-sm";
+  const base = "rounded-full border px-4 py-1.5 text-sm font-medium transition-all duration-200";
   const className = active
-    ? `${base} border-slate-900 bg-slate-900 text-white`
-    : `${base} border-slate-300 bg-white text-slate-700 hover:bg-slate-100`;
+    ? `${base} border-slate-900 bg-slate-900 text-white shadow-sm`
+    : `${base} border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-900 hover:shadow-sm`;
   return (
     <Link href={href} className={className}>
       {children}
@@ -170,7 +173,7 @@ function CategoryChip({
 
 function EmptyState({ query }: { query: string }) {
   return (
-    <section className="mt-8 rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center">
+    <section className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
       <h2 className="text-lg font-semibold text-slate-900">
         Tidak ada produk yang cocok
       </h2>
@@ -182,7 +185,7 @@ function EmptyState({ query }: { query: string }) {
       {query ? (
         <Link
           href="/produk"
-          className="mt-4 inline-block rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+          className="btn-primary mt-6"
         >
           Reset pencarian
         </Link>
@@ -195,7 +198,7 @@ function ErrorState() {
   return (
     <section
       role="alert"
-      className="mt-8 rounded-lg border border-red-200 bg-red-50 p-6 text-red-900"
+      className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-6 text-red-900"
     >
       <h2 className="text-lg font-semibold">Gagal memuat katalog</h2>
       <p className="mt-2 text-sm">
@@ -209,7 +212,7 @@ function ErrorState() {
 function SiteFooter() {
   return (
     <footer className="mt-16 border-t bg-white">
-      <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-sm text-slate-500 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-slate-500 md:flex-row md:items-center md:justify-between">
         <p>© {new Date().getFullYear()} Affiloom. Semua hak dilindungi.</p>
         <p>
           Data katalog: adaptor demo deterministik. Tidak ada scraping
