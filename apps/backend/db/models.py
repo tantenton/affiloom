@@ -336,14 +336,58 @@ class ArticleProduct(Base):
     product: Mapped[Product] = relationship()
 
 
+class Pageview(Base):
+    """Anonymous pageview event for the analytics surface (M4-001)."""
+
+    __tablename__ = "pageviews"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=_uuid)
+    path: Mapped[str] = mapped_column(String(512), nullable=False, index=True)
+    referrer: Mapped[Optional[str]] = mapped_column(String(1024), nullable=True)
+    user_agent: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    ip_hash: Mapped[Optional[str]] = mapped_column(
+        String(64), nullable=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, nullable=False, index=True
+    )
+
+
+class CtaClick(Base):
+    """Affiliate CTA click event (M4-001).
+
+    Stores the product the user clicked and a hash of the visitor IP so we can
+    de-duplicate without storing PII.
+    """
+
+    __tablename__ = "cta_clicks"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=_uuid)
+    product_id: Mapped[Optional[str]] = mapped_column(
+        String(64), nullable=True, index=True
+    )
+    article_id: Mapped[Optional[str]] = mapped_column(
+        String(64), nullable=True, index=True
+    )
+    url: Mapped[str] = mapped_column(String(2048), nullable=False)
+    ip_hash: Mapped[Optional[str]] = mapped_column(
+        String(64), nullable=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, nullable=False, index=True
+    )
+
+
 __all__ = [
     "Article",
     "ArticleCategory",
     "ArticleProduct",
     "ArticleStatus",
     "Base",
+    "CtaClick",
     "Merchant",
     "Offer",
+    "Pageview",
     "Product",
     "Site",
     "SyncRun",
