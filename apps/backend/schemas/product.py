@@ -55,3 +55,13 @@ class ProductListResponse(BaseModel):
     limit: int = Field(ge=1, le=100)
     offset: int = Field(ge=0)
     query: str | None = None
+
+
+class ProductCompareResponse(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    products: List[ProductOut]
+    missing: List[str]
+
+
+__all__ = ["ProductOut", "ProductListResponse", "ProductCompareResponse"]

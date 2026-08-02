@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
 from adapters.provider import DeterministicDemoAdapter
 from dependencies import get_catalog_adapter
-from schemas.product import ProductListResponse, ProductOut
+from schemas.product import ProductCompareResponse, ProductListResponse, ProductOut
 
 router = APIRouter(prefix="/api/products", tags=["products"])
 
@@ -49,6 +49,38 @@ async def list_products(
         offset=offset,
         query=q,
     )
+
+
+@router.get("/compare", response_model=ProductCompareResponse)
+async def compare_products(
+    ids: list[str] = Query(
+        ...,
+        min_items=1,
+        max_items=4,
+        description="Up to 4 product IDs",
+    ),
+    adapter: DeterministicDemoAdapter = Depends(get_catalog_adapter),
+) -> ProductCompareResponse:
+    if len(set(ids)) < 1 or len(set(ids)) > 4:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Provide 1-4 unique product IDs",
+        )
+    for product_id in ids:
+        if not _ID_PATTERN.match(product_id):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Invalid product ID: {product_id}",
+            )
+    products: list[ProductOut] = []
+    missing: list[str] = []
+    for product_id in ids:
+        item = await adapter.detail(product_id)
+        if item is not None:
+            products.append(ProductOut.from_item(item))
+        else:
+            missing.append(product_id)
+    return ProductCompareResponse(products=products, missing=missing)
 
 
 @router.get("/{product_id}", response_model=ProductOut)

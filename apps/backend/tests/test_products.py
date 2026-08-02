@@ -89,6 +89,20 @@ def test_product_detail_returns_full_payload() -> None:
     assert body["description"]
 
 
+def test_compare_returns_products_and_missing_ids() -> None:
+    response = client.get("/api/products/compare?ids=demo-1&ids=demo-2&ids=missing")
+    assert response.status_code == 200
+    body = response.json()
+    assert [item["id"] for item in body["products"]] == ["demo-1", "demo-2"]
+    assert body["missing"] == ["missing"]
+
+
+def test_compare_rejects_more_than_four_ids() -> None:
+    ids = "&".join(f"ids=demo-{number}" for number in range(1, 6))
+    response = client.get(f"/api/products/compare?{ids}")
+    assert response.status_code == 422
+
+
 def test_product_detail_404_shape() -> None:
     response = client.get("/api/products/does-not-exist")
     assert response.status_code == 404
