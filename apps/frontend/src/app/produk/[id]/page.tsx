@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { SiteHeader } from "@/components/SiteHeader";
-import { getProduct } from "@/lib/api";
+import { getProduct, listProducts } from "@/lib/api";
 import { formatCommission, formatPrice } from "@/lib/format";
 import { NotFoundError, Product } from "@/lib/types";
 
@@ -87,95 +87,135 @@ export default async function ProductDetailPage({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <SiteHeader />
+      <div className="min-h-screen bg-slate-50">
+        <SiteHeader />
 
-      <main className="mx-auto max-w-5xl px-4 py-10">
-        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-slate-500">
-          <Link href="/produk" className="hover:text-slate-900">
-            ← Kembali ke katalog
-          </Link>
-        </nav>
+        <main className="mx-auto max-w-5xl px-4 py-10">
+          <nav aria-label="Breadcrumb" className="mb-6 text-sm text-slate-500">
+            <Link href="/produk" className="hover:text-slate-900">
+              ← Kembali ke katalog
+            </Link>
+          </nav>
 
-        <div className="grid gap-8 md:grid-cols-2">
-          <div className="overflow-hidden rounded-lg border bg-white">
-            {product.image_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={product.image_url}
-                alt={product.title}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex aspect-square items-center justify-center text-slate-400">
-                Tanpa gambar
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-4">
-            {product.category ? (
-              <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                {product.category}
-              </span>
-            ) : null}
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-              {product.title}
-            </h1>
-            <p className="text-2xl font-semibold text-slate-900">
-              {priceLabel}
-            </p>
-
-            <dl className="mt-2 grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <dt className="text-slate-500">Sumber</dt>
-                <dd className="font-medium text-slate-900">{product.source}</dd>
-              </div>
-              {commission ? (
-                <div>
-                  <dt className="text-slate-500">Komisi afiliasi</dt>
-                  <dd className="font-medium text-slate-900">{commission}</dd>
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="overflow-hidden rounded-lg border bg-white">
+              {product.image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={product.image_url}
+                  alt={product.title}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex aspect-square items-center justify-center text-slate-400">
+                  Tanpa gambar
                 </div>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {product.category ? (
+                <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                  {product.category}
+                </span>
               ) : null}
-              <div>
-                <dt className="text-slate-500">ID produk</dt>
-                <dd className="font-mono text-slate-900">{product.id}</dd>
-              </div>
-              <div>
-                <dt className="text-slate-500">Terakhir dilihat</dt>
-                <dd className="text-slate-900">
-                  {new Date(product.last_seen_at).toLocaleDateString("id-ID")}
-                </dd>
-              </div>
-            </dl>
-
-            {product.description ? (
-              <p className="mt-4 leading-relaxed text-slate-700">
-                {product.description}
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                {product.title}
+              </h1>
+              <p className="text-2xl font-semibold text-slate-900">
+                {priceLabel}
               </p>
-            ) : null}
 
-            <a
-              href={product.url}
-              target="_blank"
-              rel="sponsored nofollow noopener noreferrer"
-              className="mt-6 inline-flex w-fit items-center justify-center rounded-md bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
-              data-testid="affiliate-cta"
-            >
-              Beli via mitra afiliasi
-            </a>
+              <dl className="mt-2 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <dt className="text-slate-500">Sumber</dt>
+                  <dd className="font-medium text-slate-900">{product.source}</dd>
+                </div>
+                {commission ? (
+                  <div>
+                    <dt className="text-slate-500">Komisi afiliasi</dt>
+                    <dd className="font-medium text-slate-900">{commission}</dd>
+                  </div>
+                ) : null}
+                <div>
+                  <dt className="text-slate-500">ID produk</dt>
+                  <dd className="font-mono text-slate-900">{product.id}</dd>
+                </div>
+                <div>
+                  <dt className="text-slate-500">Terakhir dilihat</dt>
+                  <dd className="text-slate-900">
+                    <FreshnessBadge date={product.last_seen_at} />
+                  </dd>
+                </div>
+              </dl>
 
-            <AffiliateDisclosure variant="inline" />
+              {product.description ? (
+                <p className="mt-4 leading-relaxed text-slate-700">
+                  {product.description}
+                </p>
+              ) : null}
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <a
+                  href={product.url}
+                  target="_blank"
+                  rel="sponsored nofollow noopener noreferrer"
+                  className="inline-flex w-fit items-center justify-center rounded-md bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
+                  data-testid="affiliate-cta"
+                >
+                  Beli via mitra afiliasi
+                </a>
+                <Link
+                  href={`/compare?ids=${product.id}`}
+                  className="inline-flex w-fit items-center justify-center rounded-md border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
+                >
+                  Bandingkan
+                </Link>
+              </div>
+
+              <AffiliateDisclosure variant="inline" />
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd),
-        }}
-      />
-    </div>
-  );
-}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd),
+          }}
+        />
+      </div>
+    );
+  }
+
+
+  function FreshnessBadge({ date }: { date: string }) {
+    const parsed = new Date(date);
+    const now = new Date();
+    const diffDays = Math.floor(
+      (now.getTime() - parsed.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    let label: string;
+    let color: string;
+    if (diffDays <= 1) {
+      label = "Hari ini";
+      color = "bg-green-100 text-green-800";
+    } else if (diffDays <= 7) {
+      label = `${diffDays} hari lalu`;
+      color = "bg-green-100 text-green-800";
+    } else if (diffDays <= 30) {
+      label = `${diffDays} hari lalu`;
+      color = "bg-yellow-100 text-yellow-800";
+    } else {
+      label = `${diffDays} hari lalu`;
+      color = "bg-red-100 text-red-800";
+    }
+    return (
+      <span
+        className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${color}`}
+        title={`Data diperbarui: ${parsed.toLocaleDateString("id-ID")}`}
+      >
+        {label}
+      </span>
+    );
+  }
