@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductFilters } from "@/components/ProductFilters";
 import { SearchForm } from "@/components/SearchForm";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -26,34 +27,17 @@ export const metadata: Metadata = {
 type SearchParams = {
   q?: string;
   category?: string;
+  sort?: string;
 };
 
-const PRODUCT_CATEGORIES = [
-  "Fashion",
-  "Peralatan",
-  "Kuliner",
-  "Rumah Tangga",
-  "Alat Tulis",
-  "Elektronik",
-  "Olahraga",
-  "Kecantikan",
-];
-
-function categoryHref(q: string, category?: string) {
-  const params = new URLSearchParams();
-  if (q) params.set("q", q);
-  if (category) params.set("category", category);
-  const query = params.toString();
-  return `/produk${query ? `?${query}` : ""}`;
-}
-
-export default async function ProdukPage({
+export default async function ProductListingPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
-  const query = (searchParams.q ?? "").trim();
-  const category = (searchParams.category ?? "").trim();
+  const query = searchParams.q || null;
+  const category = searchParams.category || null;
+  const sort = searchParams.sort || null;
 
   let data;
   let errored = false;
@@ -67,71 +51,57 @@ export default async function ProdukPage({
     <div className="min-h-screen pb-16 sm:pb-0" style={{ background: "rgb(var(--color-bg))" }}>
       <SiteHeader />
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10">
-        {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="mb-4 text-xs text-stone-500">
-          <Link href="/" className="hover:underline">Beranda</Link>
-          <span className="mx-1.5">/</span>
-          <span className="font-medium text-stone-900">
-            {category || "Katalog"}
-          </span>
-        </nav>
+      <main className="mx-auto flex w-full max-w-7xl gap-6 px-4 py-6 sm:py-10">
+        {/* Left sidebar (desktop only) */}
+        <ProductFilters currentCategory={category} currentQuery={query} currentSort={sort} />
 
-        {/* Hero + Category description */}
-        <header className="mb-6 sm:mb-8">
-          <p className="section-label">{category ? "Kategori" : "Katalog"}</p>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl" style={{ color: "rgb(var(--color-text))" }}>
-            {category || "Semua Produk"}
-          </h1>
-          <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed" style={{ color: "rgb(var(--color-text-muted))" }}>
-            {category
-              ? `Produk pilihan kategori ${category} dari marketplace Indonesia. Komisi tercantum transparan.`
-              : "Jelajahi produk afiliasi kurasi dari berbagai kategori. Komisi tercantum transparan."}
-          </p>
-        </header>
-
-        {/* Search */}
-        <div className="mb-4">
-          <SearchForm defaultValue={query} />
-        </div>
-
-        {/* Category chips — horizontal scroll on mobile */}
-        <div className="mb-6 flex items-center gap-3">
-          <span className="hidden text-xs font-semibold uppercase tracking-wider sm:block" style={{ color: "rgb(var(--color-text-muted))", flexShrink: 0 }}>
-            Kategori
-          </span>
-          <nav
-            aria-label="Filter kategori"
-            className="flex gap-2 overflow-x-auto pb-1"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            <CategoryChip href={categoryHref(query)} active={!category}>
-              Semua
-            </CategoryChip>
-            {PRODUCT_CATEGORIES.map((cat) => (
-              <CategoryChip
-                key={cat}
-                href={categoryHref(query, cat)}
-                active={category === cat}
-              >
-                {cat}
-              </CategoryChip>
-            ))}
+        {/* Main content */}
+        <div className="min-w-0 flex-1">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="mb-4 text-xs text-stone-500">
+            <Link href="/" className="hover:underline">Beranda</Link>
+            <span className="mx-1.5">/</span>
+            <span className="font-medium text-stone-900">
+              {category || "Katalog"}
+            </span>
           </nav>
-        </div>
 
-        {/* Results */}
-        {errored ? (
-          <ErrorState />
-        ) : !data || data.items.length === 0 ? (
-          <EmptyState query={query} />
-        ) : (
-          <ResultsGrid items={data.items} total={data.total} query={data.query} />
-        )}
+          {/* Hero + Category description */}
+          <header className="mb-6 sm:mb-8">
+            <p className="section-label">{category ? "Kategori" : "Katalog"}</p>
+            <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl" style={{ color: "rgb(var(--color-text))" }}>
+              {category || "Semua Produk"}
+            </h1>
+            <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed" style={{ color: "rgb(var(--color-text-muted))" }}>
+              {category
+                ? `Produk pilihan kategori ${category} dari marketplace Indonesia. Komisi tercantum transparan.`
+                : "Jelajahi produk afiliasi kurasi dari berbagai kategori. Komisi tercantum transparan."}
+            </p>
+          </header>
 
-        {/* Affiliate disclosure */}
-        <div className="mt-12">
-          <AffiliateDisclosure />
+          {/* Search + mobile filter button */}
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex-1">
+              <SearchForm defaultValue={query || undefined} />
+            </div>
+            <div className="lg:hidden">
+              <ProductFilters currentCategory={category} currentQuery={query} currentSort={sort} />
+            </div>
+          </div>
+
+          {/* Results */}
+          {errored ? (
+            <ErrorState />
+          ) : !data || data.items.length === 0 ? (
+            <EmptyState query={query || ""} />
+          ) : (
+            <ResultsGrid items={data.items} total={data.total} query={data.query} />
+          )}
+
+          {/* Affiliate disclosure */}
+          <div className="mt-12">
+            <AffiliateDisclosure />
+          </div>
         </div>
       </main>
 
@@ -167,25 +137,6 @@ function ResultsGrid({
         ))}
       </ul>
     </section>
-  );
-}
-
-function CategoryChip({
-  href,
-  active,
-  children,
-}: {
-  href: string;
-  active: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`chip flex-shrink-0${active ? " chip-active" : ""}`}
-    >
-      {children}
-    </Link>
   );
 }
 
