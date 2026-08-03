@@ -85,12 +85,12 @@
     height: auto;
   }
 
-  /* Safe minimum touch target */
+  /* Safe minimum touch target — only interactive elements, NOT inline links */
   button,
   [role="button"],
-  a {
+  input[type="submit"],
+  input[type="button"] {
     min-height: 44px;
-    min-width: 44px;
   }
 
   h1, h2, h3, h4, h5, h6 {
