@@ -108,6 +108,8 @@ export default async function ProductDetailPage({
                   src={product.image_url}
                   alt={product.title}
                   className="aspect-square w-full object-cover"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               ) : (
                 <div className="flex aspect-square items-center justify-center">

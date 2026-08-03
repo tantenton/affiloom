@@ -84,7 +84,7 @@ export default async function ComparePage({
                   <th key={p.id} className="min-w-[200px] border-r p-4 text-center">
                     {p.image_url && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.image_url} alt={p.title} className="mx-auto mb-3 h-24 w-24 rounded object-cover" />
+                      <img src={p.image_url} alt={p.title} className="mx-auto mb-3 rounded object-cover" width={96} height={96} style={{ width: 96, height: 96, flexShrink: 0 }} />
                     )}
                     <div className="font-bold text-slate-900">{p.title}</div>
                     <Link href={`/produk/${p.id}`} className="mt-2 block text-xs text-blue-600 hover:underline">Detail produk</Link>
