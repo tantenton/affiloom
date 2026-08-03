@@ -37,7 +37,7 @@ export default async function ComparePage({
       <div className="min-h-screen bg-slate-50 pb-20 sm:pb-0">
         <SiteHeader />
         <main className="mx-auto max-w-5xl px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-slate-900">Pilih produk untuk dibandingkan</h1>
+          <h2 className="text-2xl font-bold text-slate-900">Pilih produk untuk dibandingkan</h2>
           <p className="mt-2 text-slate-600">Kamu belum memilih produk apa pun.</p>
           <Link href="/produk" className="mt-6 inline-block rounded-md bg-slate-900 px-6 py-2 text-sm font-medium text-white hover:bg-slate-700">
             Kembali ke katalog
@@ -55,7 +55,7 @@ export default async function ComparePage({
       <div className="min-h-screen bg-slate-50 pb-20 sm:pb-0">
         <SiteHeader />
         <main className="mx-auto max-w-5xl px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-red-900">Gagal memuat perbandingan</h1>
+          <h2 className="text-2xl font-bold text-red-900">Gagal memuat perbandingan</h2>
           <p className="mt-2 text-slate-600">Pastikan ID produk valid dan coba lagi.</p>
         </main>
       </div>
