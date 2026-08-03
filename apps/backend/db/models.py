@@ -341,22 +341,40 @@ class Collection(Base):
     slug: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow, nullable=False)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, onupdate=_utcnow, nullable=False
+    )
 
-    products: Mapped[list["CollectionProduct"]] = relationship(back_populates="collection", cascade="all, delete-orphan")
+    products: Mapped[list["CollectionProduct"]] = relationship(
+        back_populates="collection", cascade="all, delete-orphan"
+    )
 
 
 class CollectionProduct(Base):
     __tablename__ = "collection_products"
-    __table_args__ = (UniqueConstraint("collection_id", "product_id", name="uq_collection_products_col_prod"),)
+    __table_args__ = (
+        UniqueConstraint(
+            "collection_id", "product_id", name="uq_collection_products_col_prod"
+        ),
+    )
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True, default=_uuid)
-    collection_id: Mapped[str] = mapped_column(String(64), ForeignKey("collections.id", ondelete="CASCADE"), nullable=False)
-    product_id: Mapped[str] = mapped_column(String(64), ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    collection_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("collections.id", ondelete="CASCADE"), nullable=False
+    )
+    product_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("products.id", ondelete="CASCADE"), nullable=False
+    )
     position: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, nullable=False
+    )
 
     collection: Mapped[Collection] = relationship(back_populates="products")
     product: Mapped[Product] = relationship()
