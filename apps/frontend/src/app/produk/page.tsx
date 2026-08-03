@@ -64,20 +64,31 @@ export default async function ProdukPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16 sm:pb-0">
+    <div className="min-h-screen pb-16 sm:pb-0" style={{ background: "rgb(var(--color-bg))" }}>
       <SiteHeader />
 
       <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10">
-        {/* Hero mini */}
-        <div className="mb-6 text-center sm:mb-8">
-          <p className="section-label">Katalog</p>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">
-            Produk Kurasi
+        {/* Breadcrumb */}
+        <nav aria-label="Breadcrumb" className="mb-4 text-xs text-stone-500">
+          <Link href="/" className="hover:underline">Beranda</Link>
+          <span className="mx-1.5">/</span>
+          <span className="font-medium text-stone-900">
+            {category || "Katalog"}
+          </span>
+        </nav>
+
+        {/* Hero + Category description */}
+        <header className="mb-6 sm:mb-8">
+          <p className="section-label">{category ? "Kategori" : "Katalog"}</p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl" style={{ color: "rgb(var(--color-text))" }}>
+            {category || "Semua Produk"}
           </h1>
-          <p className="mx-auto mt-2 max-w-xl text-sm text-gray-600">
-            Produk afiliasi dari marketplace Indonesia. Komisi tercantum terbuka.
+          <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed" style={{ color: "rgb(var(--color-text-muted))" }}>
+            {category
+              ? `Produk pilihan kategori ${category} dari marketplace Indonesia. Komisi tercantum transparan.`
+              : "Jelajahi produk afiliasi kurasi dari berbagai kategori. Komisi tercantum transparan."}
           </p>
-        </div>
+        </header>
 
         {/* Search */}
         <div className="mb-4">
@@ -85,24 +96,29 @@ export default async function ProdukPage({
         </div>
 
         {/* Category chips — horizontal scroll on mobile */}
-        <nav
-          aria-label="Filter kategori"
-          className="mb-6 flex gap-2 overflow-x-auto pb-1"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          <CategoryChip href={categoryHref(query)} active={!category}>
-            Semua
-          </CategoryChip>
-          {PRODUCT_CATEGORIES.map((cat) => (
-            <CategoryChip
-              key={cat}
-              href={categoryHref(query, cat)}
-              active={category === cat}
-            >
-              {cat}
+        <div className="mb-6 flex items-center gap-3">
+          <span className="hidden text-xs font-semibold uppercase tracking-wider sm:block" style={{ color: "rgb(var(--color-text-muted))", flexShrink: 0 }}>
+            Kategori
+          </span>
+          <nav
+            aria-label="Filter kategori"
+            className="flex gap-2 overflow-x-auto pb-1"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            <CategoryChip href={categoryHref(query)} active={!category}>
+              Semua
             </CategoryChip>
-          ))}
-        </nav>
+            {PRODUCT_CATEGORIES.map((cat) => (
+              <CategoryChip
+                key={cat}
+                href={categoryHref(query, cat)}
+                active={category === cat}
+              >
+                {cat}
+              </CategoryChip>
+            ))}
+          </nav>
+        </div>
 
         {/* Results */}
         {errored ? (
@@ -114,7 +130,7 @@ export default async function ProdukPage({
         )}
 
         {/* Affiliate disclosure */}
-        <div className="mt-10">
+        <div className="mt-12">
           <AffiliateDisclosure />
         </div>
       </main>

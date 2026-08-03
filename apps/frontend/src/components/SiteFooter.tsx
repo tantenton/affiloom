@@ -1,97 +1,101 @@
 import Link from "next/link";
 
 export function SiteFooter() {
+  const year = new Date().getFullYear();
+
+  const links = {
+    Jelajahi: [
+      { href: "/produk", label: "Katalog produk" },
+      { href: "/koleksi", label: "Koleksi kurasi" },
+      { href: "/artikel", label: "Panduan belanja" },
+      { href: "/compare", label: "Perbandingan" },
+    ],
+    Tentang: [
+      { href: "/metodologi", label: "Metodologi" },
+      { href: "/pengungkapan-afiliasi", label: "Pengungkapan afiliasi" },
+      { href: "/privasi", label: "Privasi" },
+      { href: "/syarat-ketentuan", label: "Syarat & ketentuan" },
+    ],
+    Kontak: [
+      { href: "/kontak", label: "Hubungi kami" },
+      { href: "https://github.com/tantenton/affiloom", label: "GitHub", external: true },
+    ],
+  };
+
   return (
-    <footer className="border-t bg-slate-50">
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <footer
+      style={{
+        background: "rgb(var(--color-surface))",
+        borderTop: "1px solid rgb(var(--color-border))",
+      }}
+    >
+      <div className="mx-auto max-w-7xl px-4 py-12">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {/* Brand */}
-          <div>
-            <Link href="/" className="text-xl font-black tracking-tight text-slate-900">
-              Affi<span className="text-indigo-600">loom</span>
+          <div className="col-span-2 sm:col-span-1">
+            <Link
+              href="/"
+              className="text-xl font-black tracking-tight"
+              style={{ color: "rgb(var(--color-text))" }}
+            >
+              Affi<span style={{ color: "rgb(var(--color-primary))" }}>loom</span>
             </Link>
-            <p className="mt-3 text-sm text-slate-600">
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgb(var(--color-text-muted))" }}>
               Rekomendasi produk afiliasi transparan untuk marketplace Indonesia.
+            </p>
+            <p className="mt-2 text-xs font-medium" style={{ color: "rgb(var(--color-text-light))" }}>
+              Komisi tercantum terbuka. Tanpa dark pattern.
             </p>
           </div>
 
-          {/* Jelajahi */}
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">Jelajahi</h3>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <Link href="/produk" className="text-slate-600 hover:text-slate-900">
-                  Katalog produk
-                </Link>
-              </li>
-              <li>
-                <Link href="/koleksi" className="text-slate-600 hover:text-slate-900">
-                  Koleksi kurasi
-                </Link>
-              </li>
-              <li>
-                <Link href="/artikel" className="text-slate-600 hover:text-slate-900">
-                  Panduan belanja
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Tentang */}
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">Tentang</h3>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <Link href="/metodologi" className="text-slate-600 hover:text-slate-900">
-                  Metodologi
-                </Link>
-              </li>
-              <li>
-                <Link href="/pengungkapan-afiliasi" className="text-slate-600 hover:text-slate-900">
-                  Pengungkapan afiliasi
-                </Link>
-              </li>
-              <li>
-                <Link href="/privasi" className="text-slate-600 hover:text-slate-900">
-                  Privasi
-                </Link>
-              </li>
-              <li>
-                <Link href="/syarat-ketentuan" className="text-slate-600 hover:text-slate-900">
-                  Syarat & ketentuan
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Kontak */}
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">Kontak</h3>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li>
-                <Link href="/kontak" className="text-slate-600 hover:text-slate-900">
-                  Hubungi kami
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/tantenton/affiloom"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-slate-600 hover:text-slate-900"
-                >
-                  GitHub
-                </a>
-              </li>
-            </ul>
-          </div>
+          {/* Nav columns */}
+          {Object.entries(links).map(([title, items]) => (
+            <div key={title}>
+              <h3
+                className="text-xs font-bold uppercase tracking-wider"
+                style={{ color: "rgb(var(--color-text))" }}
+              >
+                {title}
+              </h3>
+              <ul className="mt-4 space-y-2">
+                {items.map(({ href, label, external }) => (
+                  <li key={href}>
+                    {external ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm transition-colors hover:underline"
+                        style={{ color: "rgb(var(--color-text-muted))" }}
+                      >
+                        {label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={href}
+                        className="text-sm transition-colors hover:underline"
+                        style={{ color: "rgb(var(--color-text-muted))" }}
+                      >
+                        {label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-12 border-t border-slate-200 pt-8 text-center text-sm text-slate-500">
-          <p>© {new Date().getFullYear()} Affiloom. Semua hak dilindungi.</p>
-          <p className="mt-2">
-            Data katalog: adaptor demo deterministik. Tidak ada scraping marketplace.
-          </p>
+        {/* Bottom bar */}
+        <div
+          className="mt-12 flex flex-col items-center justify-between gap-2 border-t pt-6 text-xs sm:flex-row"
+          style={{
+            borderColor: "rgb(var(--color-border))",
+            color: "rgb(var(--color-text-light))",
+          }}
+        >
+          <p>© {year} Affiloom. Semua hak dilindungi.</p>
+          <p>Data katalog: adaptor demo deterministik. Tidak ada scraping marketplace.</p>
         </div>
       </div>
     </footer>
