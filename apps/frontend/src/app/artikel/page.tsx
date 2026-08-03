@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { listArticles, listCategories } from "@/lib/api";
 import { ArticleListItem } from "@/lib/types";
@@ -119,6 +120,7 @@ export default async function ArtikelPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <SiteFooter />
     </div>
   );
 }

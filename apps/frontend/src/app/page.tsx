@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { listProducts, listArticles } from "@/lib/api";
 
@@ -61,7 +62,7 @@ export default async function HomePage() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300/90">
               Rekomendasi produk mindful
             </p>
-            <h1 className="mt-6 text-5xl font-bold tracking-tight text-white sm:text-6xl">
+            <h1 className="mt-6 text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Belanja lebih <span className="text-indigo-400">cerdas</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-slate-300">
@@ -261,6 +262,7 @@ export default async function HomePage() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </div>
   );
 }

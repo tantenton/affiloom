@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchForm } from "@/components/SearchForm";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { listProducts } from "@/lib/api";
 
@@ -209,16 +210,3 @@ function ErrorState() {
   );
 }
 
-function SiteFooter() {
-  return (
-    <footer className="mt-16 border-t bg-white">
-      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-slate-500 md:flex-row md:items-center md:justify-between">
-        <p>© {new Date().getFullYear()} Affiloom. Semua hak dilindungi.</p>
-        <p>
-          Data katalog: adaptor demo deterministik. Tidak ada scraping
-          marketplace.
-        </p>
-      </div>
-    </footer>
-  );
-}

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { listCollections } from "@/lib/api";
 import { CollectionSummary } from "@/lib/types";
@@ -68,6 +69,7 @@ export default async function CollectionsPage() {
           </section>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }
