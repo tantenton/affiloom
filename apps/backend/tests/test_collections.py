@@ -9,7 +9,7 @@ from main import app
 
 
 @pytest.fixture
-def client() -> TestClient:
+def client(initialized_db: str) -> TestClient:  # noqa: ARG001
     return TestClient(app)
 
 
