@@ -24,7 +24,7 @@ export function SortSelect({ currentSort, currentCategory, currentQuery }: Props
       value={currentSort || ""}
       onChange={handleChange}
       className="input w-auto px-3 text-sm"
-      style={{ height: 40, minHeight: 40, minWidth: 160 }}
+      style={{ height: 40, minHeight: 40, minWidth: 130, flex: "1 1 130px", maxWidth: 220 }}
       aria-label="Urutkan produk"
     >
       <option value="">Relevansi</option>

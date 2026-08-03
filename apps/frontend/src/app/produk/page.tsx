@@ -80,15 +80,11 @@ export default async function ProductListingPage({
             </p>
           </header>
 
-          {/* Search + mobile filter button + sort */}
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex-1">
-              <SearchForm defaultValue={query || undefined} />
-            </div>
-            <div className="flex gap-2">
-              {/* Sort dropdown — visible on all screens */}
+          {/* Search + sort + mobile filter */}
+          <div className="mb-6 flex flex-col gap-3">
+            <SearchForm defaultValue={query || undefined} />
+            <div className="flex flex-wrap gap-2">
               <SortSelect currentSort={sort} currentCategory={category} currentQuery={query} />
-              {/* Mobile filter button */}
               <div className="lg:hidden">
                 <ProductFilters currentCategory={category} currentQuery={query} currentSort={sort} />
               </div>
