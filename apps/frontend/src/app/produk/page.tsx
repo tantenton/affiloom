@@ -127,13 +127,15 @@ function ResultsGrid({
 }) {
   return (
     <section aria-label="Hasil produk">
-      <p className="mb-4 text-sm text-gray-500">
-        <span className="font-semibold text-gray-900">{items.length}</span> dari{" "}
-        <span className="font-semibold text-gray-900">{total}</span> produk
-        {query ? (
-          <> untuk &ldquo;<span className="font-medium text-gray-900">{query}</span>&rdquo;</>
-        ) : null}
-      </p>
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm" style={{ color: "rgb(var(--color-text-muted))" }}>
+          <span className="font-semibold" style={{ color: "rgb(var(--color-text))" }}>{items.length}</span> dari{" "}
+          <span className="font-semibold" style={{ color: "rgb(var(--color-text))" }}>{total}</span> produk
+          {query && (
+            <> untuk <span className="font-medium" style={{ color: "rgb(var(--color-text))" }}>&ldquo;{query}&rdquo;</span></>
+          )}
+        </p>
+      </div>
       {/* Mobile: 2 col, tablet: 3 col, desktop: 4 col */}
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
         {items.map((item) => (
@@ -142,6 +144,14 @@ function ResultsGrid({
           </li>
         ))}
       </ul>
+      {/* Load More / Pagination hint */}
+      {items.length < total && (
+        <div className="mt-8 text-center">
+          <p className="text-sm" style={{ color: "rgb(var(--color-text-muted))" }}>
+            Menampilkan {items.length} dari {total} produk. Pagination akan ditambahkan segera.
+          </p>
+        </div>
+      )}
     </section>
   );
 }
