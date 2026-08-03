@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { ProductCard } from "@/components/ProductCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { listProducts, listArticles } from "@/lib/api";
@@ -107,7 +108,7 @@ export default async function HomePage() {
 
         {/* Featured products */}
         {products && products.items.length > 0 ? (
-          <section className="mx-auto max-w-6xl px-4 py-16">
+          <section className="mx-auto max-w-7xl px-4 py-16">
             <div className="flex items-end justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">
@@ -116,63 +117,14 @@ export default async function HomePage() {
                 <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
                   Produk rekomendasi
                 </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  Produk dengan data harga terbaru dan ketersediaan terjangkau.
-                </p>
               </div>
               <Link href="/produk" className="text-sm font-bold text-slate-900 hover:text-indigo-600">
                 Lihat semua →
               </Link>
             </div>
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {products.items.slice(0, 6).map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/produk/${product.id}`}
-                  className="card card-hover flex h-full flex-col overflow-hidden no-underline"
-                >
-                  <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
-                    {product.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={product.image_url}
-                        alt={product.title}
-                        className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-slate-400">
-                        Tanpa gambar
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    {product.category ? (
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">
-                        {product.category}
-                      </span>
-                    ) : null}
-                    <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-snug text-slate-900">
-                      {product.title}
-                    </h3>
-                    <p className="mt-2 text-xs text-slate-500 line-clamp-2">
-                      {product.description ?? "Produk afiliasi kurasi."}
-                    </p>
-                    <div className="mt-auto pt-4">
-                      <span className="text-base font-bold text-slate-900">
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: product.currency ?? "IDR",
-                          maximumFractionDigits: 0,
-                        }).format(product.price ?? 0)}
-                      </span>
-                      <span className="ml-3 text-[11px] font-bold uppercase tracking-wide text-slate-400">
-                        {product.commission_rate != null
-                          ? `${(product.commission_rate * 100).toFixed(1)}% komisi`
-                          : "Komisi tidak diketahui"}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {products.items.slice(0, 8).map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </section>

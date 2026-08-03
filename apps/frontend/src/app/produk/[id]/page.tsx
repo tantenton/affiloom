@@ -100,31 +100,35 @@ export default async function ProductDetailPage({
           </nav>
 
           <div className="grid gap-8 md:grid-cols-2">
-            <div className="overflow-hidden rounded-lg border bg-white">
+            {/* Image */}
+            <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 shadow-lg ring-1 ring-slate-200">
               {product.image_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={product.image_url}
                   alt={product.title}
-                  className="h-full w-full object-cover"
+                  className="aspect-square w-full object-cover"
                 />
               ) : (
-                <div className="flex aspect-square items-center justify-center text-slate-400">
-                  Tanpa gambar
+                <div className="flex aspect-square items-center justify-center">
+                  <svg className="h-16 w-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
                 </div>
               )}
             </div>
 
+            {/* Info */}
             <div className="flex flex-col gap-4">
-              {product.category ? (
-                <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              {product.category && (
+                <span className="inline-block w-fit rounded-full bg-indigo-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-indigo-700">
                   {product.category}
                 </span>
-              ) : null}
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              )}
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
                 {product.title}
               </h1>
-              <p className="text-2xl font-semibold text-slate-900">
+              <p className="text-3xl font-bold text-slate-900">
                 {priceLabel}
               </p>
 
@@ -157,18 +161,18 @@ export default async function ProductDetailPage({
                 </p>
               ) : null}
 
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap gap-3">
                 <CtaTracker
                   url={product.url}
                   productId={product.id}
-                  className="inline-flex w-fit items-center justify-center rounded-md bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
+                  className="btn-primary"
                   data-testid="affiliate-cta"
                 >
                   Beli via mitra afiliasi
                 </CtaTracker>
                 <Link
                   href={`/compare?ids=${product.id}`}
-                  className="inline-flex w-fit items-center justify-center rounded-md border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
+                  className="btn-secondary"
                 >
                   Bandingkan
                 </Link>
