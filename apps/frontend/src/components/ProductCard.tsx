@@ -17,11 +17,11 @@ export function ProductCard({
   onCompareToggle,
   compareChecked = false,
 }: ProductCardProps) {
-  // Calculate freshness
+  // Freshness — only show stale badge if >72h (3 days), fresh if <2h
   const lastSeenDate = new Date(product.last_seen_at);
   const hoursSinceUpdate = (Date.now() - lastSeenDate.getTime()) / (1000 * 60 * 60);
-  const isStale = hoursSinceUpdate > 24;
-  const isFresh = hoursSinceUpdate < 1;
+  const isStale = hoursSinceUpdate > 72;
+  const isFresh = hoursSinceUpdate < 2;
 
   // Extract brand from source (demo: "tokopedia" -> "Tokopedia")
   const brand = product.source.charAt(0).toUpperCase() + product.source.slice(1);
