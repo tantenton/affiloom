@@ -11,7 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from db.models import Collection, CollectionProduct, Product
+from db.models import Collection, CollectionProduct
 from db.session import get_session
 
 router = APIRouter(prefix="/api/collections", tags=["collections"])

@@ -17,14 +17,13 @@ from middlewares.admin_audit import AdminAuditMiddleware  # M1-005
 from routers.admin import router as admin_router
 from routers.admin_content import router as admin_content_router
 from routers.admin_dashboard import router as admin_dashboard_router
+from routers.collections import router as collections_router
 from routers.content import router as content_router
 from routers.health import router as health_router
 from routers.outbound import router as outbound_router
 from routers.products import router as products_router
 from routers.sitemap import router as sitemap_router
 from routers.track import router as track_router
-from routers.outbound import router as outbound_router
-from routers.collections import router as collections_router
 from services.logging import setup_logging
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["100/minute"])
