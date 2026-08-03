@@ -3,6 +3,8 @@ import {
   ArticleListResponse,
   Category,
   CategoryListResponse,
+  CollectionDetail,
+  CollectionSummary,
   NotFoundError,
   Product,
   ProductListResponse,
@@ -140,4 +142,12 @@ export async function getRobots(
   opts: FetchOptions = {},
 ): Promise<RobotsResponse> {
   return apiFetch<RobotsResponse>("/api/robots", opts);
+}
+
+export async function listCollections(opts: FetchOptions = {}): Promise<CollectionSummary[]> {
+  return apiFetch<CollectionSummary[]>('/api/collections', opts);
+}
+
+export async function getCollection(slug: string, opts: FetchOptions = {}): Promise<CollectionDetail> {
+  return apiFetch<CollectionDetail>(`/api/collections/${encodeURIComponent(slug)}`, opts);
 }

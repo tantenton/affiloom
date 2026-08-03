@@ -23,6 +23,12 @@ export function SiteHeader() {
           >
             Artikel
           </Link>
+          <Link
+            href="/koleksi"
+            className="text-slate-600 hover:text-slate-900"
+          >
+            Koleksi
+          </Link>
         </nav>
       </div>
     </header>

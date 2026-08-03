@@ -121,3 +121,7 @@ export type RobotsResponse = {
   rules: RobotsRule[];
   sitemaps: string[];
 };
+
+export type CollectionSummary = { id: string; slug: string; title: string; description: string | null; product_count: number; };
+export type CollectionProductItem = { id: string; title: string; image_url: string | null; price: number | null; currency: string | null; category: string | null; };
+export type CollectionDetail = { id: string; slug: string; title: string; description: string | null; products: CollectionProductItem[]; };
