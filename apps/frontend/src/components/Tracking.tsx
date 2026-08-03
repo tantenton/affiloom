@@ -23,11 +23,15 @@ export function CtaTracker({
   articleId,
   url,
   children,
+  className,
+  "data-testid": testId,
 }: {
   productId?: string;
   articleId?: string;
   url: string;
   children: React.ReactNode;
+  className?: string;
+  "data-testid"?: string;
 }) {
   const handleClick = () => {
     if (typeof window === "undefined") return;
@@ -42,7 +46,14 @@ export function CtaTracker({
     ).catch(() => {});
   };
   return (
-    <a href={url} onClick={handleClick} target="_blank" rel="sponsored nofollow noopener noreferrer">
+    <a
+      href={url}
+      onClick={handleClick}
+      target="_blank"
+      rel="sponsored nofollow noopener noreferrer"
+      className={className}
+      data-testid={testId}
+    >
       {children}
     </a>
   );

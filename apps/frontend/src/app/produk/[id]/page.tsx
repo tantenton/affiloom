@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { SiteHeader } from "@/components/SiteHeader";
+import { CtaTracker } from "@/components/Tracking";
 import { getProduct, listProducts } from "@/lib/api";
 import { formatCommission, formatPrice } from "@/lib/format";
 import { NotFoundError, Product } from "@/lib/types";
@@ -156,15 +157,14 @@ export default async function ProductDetailPage({
               ) : null}
 
               <div className="mt-4 flex flex-wrap gap-3">
-                <a
-                  href={product.url}
-                  target="_blank"
-                  rel="sponsored nofollow noopener noreferrer"
+                <CtaTracker
+                  url={product.url}
+                  productId={product.id}
                   className="inline-flex w-fit items-center justify-center rounded-md bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
                   data-testid="affiliate-cta"
                 >
                   Beli via mitra afiliasi
-                </a>
+                </CtaTracker>
                 <Link
                   href={`/compare?ids=${product.id}`}
                   className="inline-flex w-fit items-center justify-center rounded-md border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
