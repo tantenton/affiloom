@@ -46,11 +46,20 @@ async def check_link_health(
                         "url": url,
                         "ok": response.status_code < 400,
                         "status_code": response.status_code,
-                        "error": None if response.status_code < 400 else f"HTTP {response.status_code}",
+                        "error": (
+                            None
+                            if response.status_code < 400
+                            else f"HTTP {response.status_code}"
+                        ),
                     }
             except httpx.RequestError as exc:
                 if method == "GET":
-                    return {"url": url, "ok": False, "status_code": None, "error": str(exc)}
+                    return {
+                        "url": url,
+                        "ok": False,
+                        "status_code": None,
+                        "error": str(exc),
+                    }
         return {"url": url, "ok": False, "status_code": None, "error": "Unreachable"}
     finally:
         if own_client:
