@@ -58,25 +58,25 @@ export function SiteFooter() {
                 {title}
               </h3>
               <ul className="mt-4 space-y-2">
-                {items.map(({ href, label, external }) => (
-                  <li key={href}>
-                    {external ? (
+                {items.map((item) => (
+                  <li key={item.href}>
+                    {"external" in item && item.external ? (
                       <a
-                        href={href}
+                        href={item.href}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm transition-colors hover:underline"
                         style={{ color: "rgb(var(--color-text-muted))" }}
                       >
-                        {label}
+                        {item.label}
                       </a>
                     ) : (
                       <Link
-                        href={href}
+                        href={item.href}
                         className="text-sm transition-colors hover:underline"
                         style={{ color: "rgb(var(--color-text-muted))" }}
                       >
-                        {label}
+                        {item.label}
                       </Link>
                     )}
                   </li>
