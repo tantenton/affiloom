@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
-import { ProductCard } from "@/components/ProductCard";
+import { EmptyState, ErrorState, ProductGrid } from "@/components/ProductGrid";
 import { ProductFilters } from "@/components/ProductFilters";
 import { SearchForm } from "@/components/SearchForm";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -99,9 +99,30 @@ export default async function ProductListingPage({
           {errored ? (
             <ErrorState />
           ) : !data || data.items.length === 0 ? (
-            <EmptyState query={query || ""} />
+            <EmptyState query={query} />
           ) : (
-            <ResultsGrid items={data.items} total={data.total} query={data.query} />
+            <>
+              {/* Result count */}
+              <div className="mb-4">
+                <p className="text-sm" style={{ color: "rgb(var(--color-text-muted))" }}>
+                  <span className="font-semibold" style={{ color: "rgb(var(--color-text))" }}>{data.items.length}</span> dari{" "}
+                  <span className="font-semibold" style={{ color: "rgb(var(--color-text))" }}>{data.total}</span> produk
+                  {data.query && (
+                    <> untuk <span className="font-medium" style={{ color: "rgb(var(--color-text))" }}>&ldquo;{data.query}&rdquo;</span></>
+                  )}
+                </p>
+              </div>
+              {/* Grid */}
+              <ProductGrid items={data.items} />
+              {/* Pagination hint */}
+              {data.items.length < data.total && (
+                <div className="mt-8 text-center">
+                  <p className="text-sm" style={{ color: "rgb(var(--color-text-muted))" }}>
+                    Menampilkan {data.items.length} dari {data.total} produk. Pagination akan ditambahkan segera.
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
           {/* Affiliate disclosure */}
@@ -116,81 +137,4 @@ export default async function ProductListingPage({
   );
 }
 
-function ResultsGrid({
-  items,
-  total,
-  query,
-}: {
-  items: Awaited<ReturnType<typeof listProducts>>["items"];
-  total: number;
-  query: string | null;
-}) {
-  return (
-    <section aria-label="Hasil produk">
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm" style={{ color: "rgb(var(--color-text-muted))" }}>
-          <span className="font-semibold" style={{ color: "rgb(var(--color-text))" }}>{items.length}</span> dari{" "}
-          <span className="font-semibold" style={{ color: "rgb(var(--color-text))" }}>{total}</span> produk
-          {query && (
-            <> untuk <span className="font-medium" style={{ color: "rgb(var(--color-text))" }}>&ldquo;{query}&rdquo;</span></>
-          )}
-        </p>
-      </div>
-      {/* Mobile: 2 col, tablet: 3 col, desktop: 4 col */}
-      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-        {items.map((item) => (
-          <li key={item.id}>
-            <ProductCard product={item} />
-          </li>
-        ))}
-      </ul>
-      {/* Load More / Pagination hint */}
-      {items.length < total && (
-        <div className="mt-8 text-center">
-          <p className="text-sm" style={{ color: "rgb(var(--color-text-muted))" }}>
-            Menampilkan {items.length} dari {total} produk. Pagination akan ditambahkan segera.
-          </p>
-        </div>
-      )}
-    </section>
-  );
-}
-
-function EmptyState({ query }: { query: string }) {
-  return (
-    <section className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-      <h2 className="text-lg font-semibold text-slate-900">
-        Tidak ada produk yang cocok
-      </h2>
-      <p className="mt-2 text-slate-600">
-        {query
-          ? `Kami belum menemukan produk untuk "${query}". Coba kata kunci lain.`
-          : "Katalog kosong. Silakan cek kembali nanti."}
-      </p>
-      {query ? (
-        <Link
-          href="/produk"
-          className="btn-primary mt-6"
-        >
-          Reset pencarian
-        </Link>
-      ) : null}
-    </section>
-  );
-}
-
-function ErrorState() {
-  return (
-    <section
-      role="alert"
-      className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-6 text-red-900"
-    >
-      <h2 className="text-lg font-semibold">Gagal memuat katalog</h2>
-      <p className="mt-2 text-sm">
-        Layanan katalog sedang tidak dapat dihubungi. Coba muat ulang halaman
-        beberapa saat lagi.
-      </p>
-    </section>
-  );
-}
 
