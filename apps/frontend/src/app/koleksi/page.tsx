@@ -29,7 +29,7 @@ export default async function CollectionsPage() {
         <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">
           Kurasi
         </p>
-        <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">
+        <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
           Koleksi
         </h1>
         <p className="mt-3 max-w-2xl text-slate-600">

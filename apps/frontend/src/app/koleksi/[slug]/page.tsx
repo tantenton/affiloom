@@ -47,7 +47,7 @@ export default async function CollectionDetailPage({ params }: Props) {
         <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">
           Koleksi
         </p>
-        <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">
+        <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
           {collection.title}
         </h1>
         {collection.description ? (
