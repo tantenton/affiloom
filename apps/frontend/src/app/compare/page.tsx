@@ -34,7 +34,7 @@ export default async function ComparePage({
 
   if (ids.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 pb-20 sm:pb-0">
         <SiteHeader />
         <main className="mx-auto max-w-5xl px-4 py-20 text-center">
           <h1 className="text-2xl font-bold text-slate-900">Pilih produk untuk dibandingkan</h1>
@@ -52,7 +52,7 @@ export default async function ComparePage({
     data = await getCompareData(ids);
   } catch (err) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 pb-20 sm:pb-0">
         <SiteHeader />
         <main className="mx-auto max-w-5xl px-4 py-20 text-center">
           <h1 className="text-2xl font-bold text-red-900">Gagal memuat perbandingan</h1>
