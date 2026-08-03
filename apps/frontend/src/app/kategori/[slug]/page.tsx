@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getCategory, listArticles } from "@/lib/api";
 import { Category, NotFoundError } from "@/lib/types";
@@ -156,6 +157,7 @@ export default async function KategoriPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <SiteFooter />
     </div>
   );
 }

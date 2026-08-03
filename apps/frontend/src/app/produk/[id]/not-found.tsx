@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
 export default function ProductNotFound() {
@@ -21,6 +22,7 @@ export default function ProductNotFound() {
           Kembali ke katalog
         </Link>
       </main>
+      <SiteFooter />
     </div>
   );
 }

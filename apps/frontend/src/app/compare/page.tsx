@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { formatPrice } from "@/lib/format";
 import { Product } from "@/lib/types";
@@ -114,6 +115,7 @@ export default async function ComparePage({
           </table>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
