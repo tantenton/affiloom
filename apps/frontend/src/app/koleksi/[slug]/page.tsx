@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getCollection } from "@/lib/api";
 import { NotFoundError } from "@/lib/types";
@@ -40,7 +41,7 @@ export default async function CollectionDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20 sm:pb-0">
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-12">
         <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">
@@ -105,6 +106,7 @@ export default async function CollectionDetailPage({ params }: Props) {
           </section>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

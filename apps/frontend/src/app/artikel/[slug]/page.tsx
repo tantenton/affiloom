@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getArticle } from "@/lib/api";
 import { Article, NotFoundError } from "@/lib/types";
@@ -75,7 +76,7 @@ export default async function ArtikelDetailPage({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20 sm:pb-0">
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 py-10">
         <nav aria-label="Breadcrumb" className="mb-8 text-sm text-slate-500">
@@ -172,6 +173,7 @@ export default async function ArtikelDetailPage({
         </article>
       </main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <SiteFooter />
     </div>
   );
 }

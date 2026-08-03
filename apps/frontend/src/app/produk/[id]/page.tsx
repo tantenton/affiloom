@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CtaTracker } from "@/components/Tracking";
 import { getProduct, listProducts } from "@/lib/api";
@@ -88,7 +89,7 @@ export default async function ProductDetailPage({
   };
 
   return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 pb-20 sm:pb-0">
         <SiteHeader />
 
         <main className="mx-auto max-w-5xl px-4 py-10">
@@ -184,6 +185,7 @@ export default async function ProductDetailPage({
             __html: JSON.stringify(jsonLd),
           }}
         />
+        <SiteFooter />
       </div>
     );
   }
