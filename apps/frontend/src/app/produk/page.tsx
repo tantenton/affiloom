@@ -7,6 +7,7 @@ import { ProductFilters } from "@/components/ProductFilters";
 import { SearchForm } from "@/components/SearchForm";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SortSelect } from "@/components/SortSelect";
 import { listProducts } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -79,13 +80,18 @@ export default async function ProductListingPage({
             </p>
           </header>
 
-          {/* Search + mobile filter button */}
+          {/* Search + mobile filter button + sort */}
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="flex-1">
               <SearchForm defaultValue={query || undefined} />
             </div>
-            <div className="lg:hidden">
-              <ProductFilters currentCategory={category} currentQuery={query} currentSort={sort} />
+            <div className="flex gap-2">
+              {/* Sort dropdown — visible on all screens */}
+              <SortSelect currentSort={sort} currentCategory={category} currentQuery={query} />
+              {/* Mobile filter button */}
+              <div className="lg:hidden">
+                <ProductFilters currentCategory={category} currentQuery={query} currentSort={sort} />
+              </div>
             </div>
           </div>
 
