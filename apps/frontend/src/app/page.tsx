@@ -5,7 +5,7 @@ import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { ProductCard } from "@/components/ProductCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { listProducts, listArticles } from "@/lib/api";
+import { listArticles, listProducts } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
@@ -22,198 +22,235 @@ export const metadata: Metadata = {
   },
 };
 
-function CategoryPill({
-  name,
-  href,
-}: { name: string; href: string }) {
-  return (
-    <Link
-      href={href}
-      className="card px-5 py-4 text-center text-sm font-bold text-slate-700 no-underline"
-    >
-      {name}
-    </Link>
-  );
-}
+const CATEGORIES = [
+  { name: "Fashion", href: "/produk?category=Fashion" },
+  { name: "Elektronik", href: "/produk?category=Elektronik" },
+  { name: "Kuliner", href: "/produk?category=Kuliner" },
+  { name: "Kecantikan", href: "/produk?category=Kecantikan" },
+  { name: "Olahraga", href: "/produk?category=Olahraga" },
+  { name: "Rumah Tangga", href: "/produk?category=Rumah%20Tangga" },
+  { name: "Peralatan", href: "/produk?category=Peralatan" },
+  { name: "Alat Tulis", href: "/produk?category=Alat%20Tulis" },
+];
 
 export default async function HomePage() {
-  const products = await listProducts({ limit: 6 }).catch(() => null);
+  const products = await listProducts({ limit: 8 }).catch(() => null);
   const articles = await listArticles({ limit: 3 }).catch(() => null);
 
-  const categories = [
-    { name: "Fashion", href: "/produk?category=Fashion" },
-    { name: "Elektronik", href: "/produk?category=Elektronik" },
-    { name: "Kuliner", href: "/produk?category=Kuliner" },
-    { name: "Kecantikan", href: "/produk?category=Kecantikan" },
-    { name: "Olahraga", href: "/produk?category=Olahraga" },
-    { name: "Rumah Tangga", href: "/produk?category=Rumah Tangga" },
-    { name: "Peralatan", href: "/produk?category=Peralatan" },
-    { name: "Alat Tulis", href: "/produk?category=Alat Tulis" },
-  ];
-
   return (
-    <div className="min-h-screen bg-white pb-20 sm:pb-0">
+    <div className="min-h-screen" style={{ background: "rgb(var(--color-bg))" }}>
       <SiteHeader />
 
-      {/* Hero */}
       <main>
-        <section className="relative overflow-hidden bg-slate-950 text-white">
-          <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_40%,rgba(99,102,241,0.35),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(14,165,233,0.25),transparent_45%)]" />
-          <div className="relative mx-auto max-w-5xl px-4 py-24">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300/90">
-              Rekomendasi produk mindful
-            </p>
-            <h1 className="mt-6 text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Belanja lebih <span className="text-indigo-400">cerdas</span>
+        {/* Hero — warm editorial, NOT dark */}
+        <section
+          className="relative overflow-hidden"
+          style={{
+            background: "linear-gradient(135deg, rgb(245 243 255) 0%, rgb(254 252 249) 60%, rgb(255 247 237) 100%)",
+            borderBottom: "1px solid rgb(var(--color-border))",
+          }}
+        >
+          <div className="mx-auto max-w-5xl px-4 py-16 sm:py-24">
+            <p className="section-label">Rekomendasi produk mindful</p>
+            <h1
+              className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl"
+              style={{ color: "rgb(var(--color-text))", lineHeight: 1.15 }}
+            >
+              Belanja lebih{" "}
+              <span style={{ color: "rgb(var(--color-primary))" }}>cerdas</span>
             </h1>
-            <p className="mt-5 max-w-2xl text-lg text-slate-300">
-              Temukan produk terbaik dari marketplace Indonesia. Kami bandingkan,
-              meringkas, dan menampilkan tautan afiliasi secara transparan.
+            <p
+              className="mt-5 max-w-xl text-base leading-relaxed sm:text-lg"
+              style={{ color: "rgb(var(--color-text-muted))" }}
+            >
+              Produk terbaik dari marketplace Indonesia — dibandingkan,
+              diringkas, dan disajikan secara transparan. Komisi tercantum terbuka.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/produk" className="btn-primary">
+              <Link href="/produk" className="btn btn-primary">
                 Lihat katalog
               </Link>
-              <Link href="/artikel" className="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white">
+              <Link href="/artikel" className="btn btn-secondary">
                 Baca panduan
               </Link>
+            </div>
+            {/* Trust signals */}
+            <div className="mt-10 flex flex-wrap gap-4">
+              {["Komisi transparan", "Tanpa dark pattern", "Data deterministik"].map((t) => (
+                <span
+                  key={t}
+                  className="flex items-center gap-1.5 text-xs font-medium"
+                  style={{ color: "rgb(var(--color-text-muted))" }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 14, height: 14, flexShrink: 0, color: "rgb(var(--color-success))" }}>
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  {t}
+                </span>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Categories */}
-        <section className="mx-auto max-w-6xl px-4 py-16">
-          <div className="flex items-end justify-between gap-4">
+        <section className="mx-auto max-w-7xl px-4 py-12">
+          <div className="mb-6 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">
-                Jelajahi
-              </p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              <p className="section-label">Jelajahi</p>
+              <h2 className="mt-2 text-xl font-bold sm:text-2xl" style={{ color: "rgb(var(--color-text))" }}>
                 Kategori populer
               </h2>
-              <p className="mt-2 text-sm text-slate-600">
-                Pilih kategori untuk melihat rekomendasi produk terkurasi.
-              </p>
             </div>
-            <Link href="/produk" className="text-sm font-bold text-slate-900 hover:text-indigo-600">
+            <Link
+              href="/produk"
+              className="text-sm font-semibold transition-colors"
+              style={{ color: "rgb(var(--color-primary))" }}
+            >
               Lihat semua →
             </Link>
           </div>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {categories.map((c) => (
-              <CategoryPill key={c.name} {...c} />
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+            {CATEGORIES.map((c) => (
+              <Link
+                key={c.name}
+                href={c.href}
+                className="card rounded-xl px-4 py-3 text-center text-sm font-semibold transition-all hover:-translate-y-0.5"
+                style={{ color: "rgb(var(--color-text))" }}
+              >
+                {c.name}
+              </Link>
             ))}
           </div>
         </section>
 
         {/* Featured products */}
-        {products && products.items.length > 0 ? (
-          <section className="mx-auto max-w-7xl px-4 py-16">
-            <div className="flex items-end justify-between gap-4">
+        {products && products.items.length > 0 && (
+          <section className="mx-auto max-w-7xl px-4 py-4 pb-12">
+            <div className="mb-6 flex items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">
-                  Pilihan editor
-                </p>
-                <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+                <p className="section-label">Pilihan editor</p>
+                <h2 className="mt-2 text-xl font-bold sm:text-2xl" style={{ color: "rgb(var(--color-text))" }}>
                   Produk rekomendasi
                 </h2>
               </div>
-              <Link href="/produk" className="text-sm font-bold text-slate-900 hover:text-indigo-600">
+              <Link
+                href="/produk"
+                className="text-sm font-semibold transition-colors"
+                style={{ color: "rgb(var(--color-primary))" }}
+              >
                 Lihat semua →
               </Link>
             </div>
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {/* 2 col mobile, 3 tablet, 4 desktop */}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
               {products.items.slice(0, 8).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </section>
-        ) : null}
+        )}
 
-        {/* Buying guide tease */}
-        {articles && articles.items.length > 0 ? (
-          <section className="mx-auto max-w-6xl px-4 py-16">
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">
-                  Panduan belanja
-                </p>
-                <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-                  Buying guide terbaru
-                </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  Rekomendasi berbasis metodologi, bukan review fiktif.
-                </p>
-              </div>
-              <Link href="/artikel" className="text-sm font-bold text-slate-900 hover:text-indigo-600">
-                Lihat semua →
-              </Link>
-            </div>
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {articles.items.slice(0, 3).map((article) => (
+        {/* Articles */}
+        {articles && articles.items.length > 0 && (
+          <section
+            className="py-12"
+            style={{ background: "rgb(var(--color-surface))", borderTop: "1px solid rgb(var(--color-border))", borderBottom: "1px solid rgb(var(--color-border))" }}
+          >
+            <div className="mx-auto max-w-7xl px-4">
+              <div className="mb-6 flex items-end justify-between gap-4">
+                <div>
+                  <p className="section-label">Panduan belanja</p>
+                  <h2 className="mt-2 text-xl font-bold sm:text-2xl" style={{ color: "rgb(var(--color-text))" }}>
+                    Buying guide terbaru
+                  </h2>
+                </div>
                 <Link
-                  key={article.id}
-                  href={`/artikel/${article.slug}`}
-                  className="card card-hover flex h-full flex-col justify-between p-6 no-underline"
+                  href="/artikel"
+                  className="text-sm font-semibold"
+                  style={{ color: "rgb(var(--color-primary))" }}
                 >
-                  <div>
-                    {article.category ? (
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600">
-                        {article.category.name}
-                      </span>
-                    ) : null}
-                    <h3 className="mt-2 text-lg font-semibold leading-snug text-slate-900">
+                  Lihat semua →
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                {articles.items.slice(0, 3).map((article) => (
+                  <Link
+                    key={article.id}
+                    href={`/artikel/${article.slug}`}
+                    className="card card-hover flex flex-col justify-between p-5 no-underline"
+                  >
+                    {article.category && (
+                      <span className="section-label">{article.category.name}</span>
+                    )}
+                    <h3
+                      className="mt-2 text-base font-semibold leading-snug line-clamp-2"
+                      style={{ color: "rgb(var(--color-text))" }}
+                    >
                       {article.title}
                     </h3>
-                    {article.excerpt ? (
-                      <p className="mt-2 text-sm text-slate-600 line-clamp-2">
+                    {article.excerpt && (
+                      <p
+                        className="mt-2 text-sm line-clamp-2"
+                        style={{ color: "rgb(var(--color-text-muted))" }}
+                      >
                         {article.excerpt}
                       </p>
-                    ) : null}
-                  </div>
-                  <span className="mt-4 text-xs font-bold text-slate-500">
-                    Baca panduan →
-                  </span>
-                </Link>
-              ))}
+                    )}
+                    <span
+                      className="mt-4 text-xs font-bold"
+                      style={{ color: "rgb(var(--color-primary))" }}
+                    >
+                      Baca panduan →
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </section>
-        ) : null}
+        )}
 
-        {/* Disclosure + footer CTA */}
-        <section className="mx-auto max-w-6xl px-4 pb-24">
-          <div className="rounded-2xl border border-slate-200 bg-white p-8">
+        {/* Why Affiloom */}
+        <section className="mx-auto max-w-7xl px-4 py-12">
+          <div
+            className="rounded-2xl p-6 sm:p-8"
+            style={{ background: "rgb(var(--color-surface))", border: "1px solid rgb(var(--color-border))" }}
+          >
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <h2 className="text-xl font-bold text-slate-900">
+                <p className="section-label">Tentang kami</p>
+                <h2 className="mt-2 text-lg font-bold sm:text-xl" style={{ color: "rgb(var(--color-text))" }}>
                   Mengapa Affiloom berbeda?
                 </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  Kami tidak menerbitkan review palsu, menjual data pribadi, atau
-                  memaksa konten tipis. Setiap rekomendasi tercatat dan dapat
-                  ditelusuri ke sumbernya.
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: "rgb(var(--color-text-muted))" }}>
+                  Tidak ada review palsu, tidak menjual data pribadi, tidak memaksa konten tipis.
+                  Setiap rekomendasi tercatat dan dapat ditelusuri ke sumbernya.
                 </p>
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">
-                  Keadaan saat ini
+                <h3 className="text-sm font-bold" style={{ color: "rgb(var(--color-text))" }}>
+                  Status saat ini
                 </h3>
-                <ul className="mt-2 space-y-1 text-sm text-slate-700">
-                  <li>• Data masih berasal dari adaptor demo deterministik</li>
-                  <li>• Integrasi merchant sebenarnya akan ditambahkan bertahap</li>
-                  <li>• AI-generated content aktif dengan fallback deterministik</li>
+                <ul className="mt-2 space-y-1.5 text-sm" style={{ color: "rgb(var(--color-text-muted))" }}>
+                  {[
+                    "Data berasal dari adaptor demo deterministik",
+                    "Integrasi merchant ditambahkan bertahap",
+                    "AI-generated content aktif dengan fallback deterministik",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <span style={{ color: "rgb(var(--color-text-light))" }}>•</span>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
-                <p className="mt-4 text-xs text-slate-500">
-                  Milestone aman dan reversible. Produksi memerlukan approval Anda.
-                </p>
               </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-6 border-t pt-6" style={{ borderColor: "rgb(var(--color-border))" }}>
               <AffiliateDisclosure variant="inline" />
             </div>
           </div>
         </section>
       </main>
+
       <SiteFooter />
     </div>
   );
