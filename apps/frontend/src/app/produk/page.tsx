@@ -64,42 +64,45 @@ export default async function ProdukPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-20 sm:pb-0">
+    <div className="min-h-screen bg-gray-50 pb-16 sm:pb-0">
       <SiteHeader />
 
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-10">
         {/* Hero mini */}
-        <div className="mb-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600">
-            Katalog
-          </p>
-          <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        <div className="mb-6 text-center sm:mb-8">
+          <p className="section-label">Katalog</p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">
             Produk Kurasi
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">
-            Produk afiliasi kurasi dari mitra marketplace Indonesia. Komisi
-            tercantum secara terbuka.
+          <p className="mx-auto mt-2 max-w-xl text-sm text-gray-600">
+            Produk afiliasi dari marketplace Indonesia. Komisi tercantum terbuka.
           </p>
         </div>
 
-        {/* Search + Category nav */}
-        <div className="mb-8 flex flex-col gap-4">
+        {/* Search */}
+        <div className="mb-4">
           <SearchForm defaultValue={query} />
-          <nav aria-label="Filter kategori" className="flex flex-wrap gap-2">
-            <CategoryChip href={categoryHref(query)} active={!category}>
-              Semua
-            </CategoryChip>
-            {PRODUCT_CATEGORIES.map((cat) => (
-              <CategoryChip
-                key={cat}
-                href={categoryHref(query, cat)}
-                active={category === cat}
-              >
-                {cat}
-              </CategoryChip>
-            ))}
-          </nav>
         </div>
+
+        {/* Category chips — horizontal scroll on mobile */}
+        <nav
+          aria-label="Filter kategori"
+          className="mb-6 flex gap-2 overflow-x-auto pb-1"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <CategoryChip href={categoryHref(query)} active={!category}>
+            Semua
+          </CategoryChip>
+          {PRODUCT_CATEGORIES.map((cat) => (
+            <CategoryChip
+              key={cat}
+              href={categoryHref(query, cat)}
+              active={category === cat}
+            >
+              {cat}
+            </CategoryChip>
+          ))}
+        </nav>
 
         {/* Results */}
         {errored ? (
@@ -107,15 +110,11 @@ export default async function ProdukPage({
         ) : !data || data.items.length === 0 ? (
           <EmptyState query={query} />
         ) : (
-          <ResultsGrid
-            items={data.items}
-            total={data.total}
-            query={data.query}
-          />
+          <ResultsGrid items={data.items} total={data.total} query={data.query} />
         )}
 
-        {/* Affiliate disclosure at bottom */}
-        <div className="mt-12">
+        {/* Affiliate disclosure */}
+        <div className="mt-10">
           <AffiliateDisclosure />
         </div>
       </main>
@@ -135,18 +134,16 @@ function ResultsGrid({
   query: string | null;
 }) {
   return (
-    <section className="mt-6" aria-label="Hasil produk">
-      <p className="mb-6 text-sm text-slate-500">
-        Menampilkan <span className="font-semibold text-slate-900">{items.length}</span> dari{" "}
-        <span className="font-semibold text-slate-900">{total}</span> produk
+    <section aria-label="Hasil produk">
+      <p className="mb-4 text-sm text-gray-500">
+        <span className="font-semibold text-gray-900">{items.length}</span> dari{" "}
+        <span className="font-semibold text-gray-900">{total}</span> produk
         {query ? (
-          <>
-            {" "}untuk pencarian <span className="font-medium text-slate-900">&ldquo;{query}&rdquo;</span>
-          </>
+          <> untuk &ldquo;<span className="font-medium text-gray-900">{query}</span>&rdquo;</>
         ) : null}
-        .
       </p>
-      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {/* Mobile: 2 col, tablet: 3 col, desktop: 4 col */}
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
         {items.map((item) => (
           <li key={item.id}>
             <ProductCard product={item} />
@@ -166,12 +163,11 @@ function CategoryChip({
   active: boolean;
   children: React.ReactNode;
 }) {
-  const base = "rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200";
-  const cls = active
-    ? `${base} border-indigo-600 bg-indigo-600 text-white shadow-md hover:bg-indigo-700`
-    : `${base} border-slate-300 bg-white text-slate-700 hover:border-indigo-400 hover:bg-slate-50`;
   return (
-    <Link href={href} className={cls}>
+    <Link
+      href={href}
+      className={`chip flex-shrink-0${active ? " chip-active" : ""}`}
+    >
       {children}
     </Link>
   );

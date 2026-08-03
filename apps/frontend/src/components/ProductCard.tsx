@@ -4,11 +4,12 @@ import { Product } from "@/lib/types";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-slate-300">
-      {/* Image */}
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+      {/* Image — constrained, never overflow */}
       <Link
         href={`/produk/${product.id}`}
-        className="relative block aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200"
+        className="relative block w-full overflow-hidden bg-gray-100"
+        style={{ aspectRatio: "4/3" }}
         tabIndex={-1}
         aria-hidden="true"
       >
@@ -18,40 +19,64 @@ export function ProductCard({ product }: { product: Product }) {
             src={product.image_url}
             alt={product.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+              maxWidth: "100%",
+              maxHeight: "100%",
+            }}
+            className="transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <svg className="h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              className="text-gray-300"
+              style={{ width: 40, height: 40, flexShrink: 0 }}
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
             </svg>
           </div>
         )}
-        {/* Category badge overlay */}
+
+        {/* Category overlay badge */}
         {product.category && (
-          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-indigo-700 shadow-sm backdrop-blur-sm">
+          <span
+            className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-700 shadow-sm"
+            style={{ backdropFilter: "blur(4px)" }}
+          >
             {product.category}
           </span>
         )}
       </Link>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col p-4">
-        <Link href={`/produk/${product.id}`}>
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-slate-900 transition-colors group-hover:text-indigo-600">
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
+        <Link href={`/produk/${product.id}`} className="block" style={{ minHeight: 44 }}>
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900 transition-colors group-hover:text-indigo-600">
             {product.title}
           </h3>
         </Link>
 
         {product.description && (
-          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-500">
+          <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-gray-500">
             {product.description}
           </p>
         )}
 
-        <div className="mt-auto flex items-end justify-between pt-4">
-          <div>
-            <p className="text-lg font-bold tracking-tight text-slate-900">
+        <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+          <div className="min-w-0">
+            <p className="text-base font-bold text-gray-900 sm:text-lg">
               {formatPrice(product.price, product.currency)}
             </p>
             {product.commission_rate != null && (
@@ -62,12 +87,13 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
           <Link
             href={`/produk/${product.id}`}
-            className="rounded-xl bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-indigo-600"
+            className="flex-shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-[11px] font-bold text-white transition-colors hover:bg-indigo-700"
+            style={{ minHeight: 36, minWidth: 44, display: "inline-flex", alignItems: "center" }}
           >
             Detail
           </Link>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
